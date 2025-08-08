@@ -9,54 +9,44 @@ class CartService {
 
   async getCart(buyerId) {
     const cart = await this.cartRepo.findOrCreateCart(buyerId);
-    
     // Validate cart items and remove invalid ones
     await this.validateAndCleanCart(cart.id);
-    
     // Get updated cart with summary
     const updatedCart = await this.cartRepo.findByBuyer(buyerId);
     const summary = await this.cartRepo.getCartSummary(cart.id);
-    
     return {
-      cart: updatedCart,
+      ...updatedCart.toJSON(),
       summary,
     };
   }
 
   async addToCart(buyerId, productId, quantity = 1) {
-    // Validate product
-    const product = await this.productRepo.findById(productId);
-    if (!product) {
-      throw ApiError.notFound('Product not found');
+    // Validate product - only retrieve approved and active products
+    const products = await this.productRepo.findApproved({ id: productId });
+    if (!products || products.length === 0) {
+      throw ApiError.notFound('Product not found or not available for purchase');
     }
+    const product = products[0];
 
-    if (product.status !== 'approved') {
-      throw ApiError.badRequest('Product is not available for purchase');
-    }
-
-    if (!product.is_active) {
-      throw ApiError.badRequest('Product is no longer active');
-    }
-
-    if (!product.sale_price) {
+    if (!product.salePrice) {
       throw ApiError.badRequest('Product price not set');
     }
 
     // Check stock availability
-    if (product.stock_quantity < quantity) {
-      throw ApiError.badRequest(`Only ${product.stock_quantity} items available in stock`);
+    if (product.stockQuantity < quantity) {
+      throw ApiError.badRequest(`Only ${product.stockQuantity} items available in stock`);
     }
 
     // Check minimum order quantity
-    if (quantity < product.min_order_quantity) {
-      throw ApiError.badRequest(`Minimum order quantity is ${product.min_order_quantity}`);
+    if (quantity < product.minOrderQuantity) {
+      throw ApiError.badRequest(`Minimum order quantity is ${product.minOrderQuantity}`);
     }
 
     // Get or create cart
     const cart = await this.cartRepo.findOrCreateCart(buyerId);
 
     // Add item to cart
-    await this.cartRepo.addItem(cart.id, productId, quantity, product.sale_price);
+    await this.cartRepo.addItem(cart.id, productId, quantity, product.salePrice);
 
     return await this.getCart(buyerId);
   }
@@ -69,17 +59,18 @@ class CartService {
 
     // Validate product and quantity
     if (quantity > 0) {
-      const product = await this.productRepo.findById(productId);
-      if (!product) {
-        throw ApiError.notFound('Product not found');
+      const products = await this.productRepo.findApproved({ id: productId });
+      if (!products || products.length === 0) {
+        throw ApiError.notFound('Product not found or not available for purchase');
+      }
+      const product = products[0];
+
+      if (product.stockQuantity < quantity) {
+        throw ApiError.badRequest(`Only ${product.stockQuantity} items available in stock`);
       }
 
-      if (product.stock_quantity < quantity) {
-        throw ApiError.badRequest(`Only ${product.stock_quantity} items available in stock`);
-      }
-
-      if (quantity < product.min_order_quantity) {
-        throw ApiError.badRequest(`Minimum order quantity is ${product.min_order_quantity}`);
+      if (quantity < product.minOrderQuantity) {
+        throw ApiError.badRequest(`Minimum order quantity is ${product.minOrderQuantity}`);
       }
     }
 
@@ -127,13 +118,13 @@ class CartService {
 
   async validateAndCleanCart(cartId) {
     // Remove invalid items (inactive or unapproved products)
-    const removedItems = await this.cartRepo.removeInvalidItems(cartId);
+    const removedItems = (await this.cartRepo.removeInvalidItems(cartId)) || [];
     
     // Update prices for items where price has changed
-    const updatedPrices = await this.cartRepo.updatePrices(cartId);
+    const updatedPrices = (await this.cartRepo.updatePrices(cartId)) || [];
     
     // Validate remaining items
-    const validationResults = await this.cartRepo.validateCartItems(cartId);
+    const validationResults = (await this.cartRepo.validateCartItems(cartId)) || [];
     
     const issues = [];
     

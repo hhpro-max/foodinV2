@@ -1,5 +1,5 @@
 const BaseRepository = require('./base.repository');
-const { Cart, CartItem, Product, Profile, ProductImage } = require('../models');
+const { Cart, CartItem, Product, Profile, ProductImage, User } = require('../models');
 
 class CartRepository extends BaseRepository {
   constructor(sequelize) {
@@ -7,30 +7,34 @@ class CartRepository extends BaseRepository {
   }
 
   async findByBuyer(buyerId) {
-    return await this.findOne({ buyerId }, {
-      include: [
-        {
-          model: CartItem,
-          as: 'items',
-          include: [
-            {
-              model: Product,
-              as: 'product',
-              include: [
-                {
-                  model: Profile,
-                  as: 'sellerProfile',
-                },
-                {
-                  model: ProductImage,
-                  as: 'images',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
+    return await this.findOne(
+      { buyerId },
+      {
+        include: [
+          {
+            model: CartItem,
+            as: 'items',
+            include: [
+              {
+                model: Product,
+                as: 'product',
+                include: [
+                  {
+                    model: User,
+                    as: 'productSeller',
+                    include: [{ model: Profile, as: 'profileInfo' }],
+                  },
+                  {
+                    model: ProductImage,
+                    as: 'productImages',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }
+    );
   }
 
   async findOrCreateCart(buyerId, sessionId = null) {
@@ -70,12 +74,12 @@ class CartRepository extends BaseRepository {
   }
 
   async getCartSummary(cartId) {
-    const { fn, col } = this.sequelize.Sequelize;
+    const { fn, col, literal } = this.sequelize.Sequelize;
     const summary = await CartItem.findAll({
       where: { cartId },
       attributes: [
         [fn('SUM', col('quantity')), 'totalQuantity'],
-        [fn('SUM', col('unitPrice') * col('quantity')), 'totalPrice'],
+        [fn('SUM', literal('"unit_price" * quantity')), 'totalPrice'],
       ],
       raw: true,
     });

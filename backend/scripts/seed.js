@@ -262,6 +262,263 @@ async function seedDatabase(options = {}) {
       console.log('ℹ️  Default admin user already exists');
     }
 
+    // Create additional users: 2 sellers, 1 admin, 1 buyer
+    const usersToCreate = [
+      {
+        phone: '+989111111111',
+        firstName: 'Admin',
+        lastName: 'Two',
+        email: 'admin2@foodin.com',
+        customerCode: 'ADMIN002',
+        roles: ['admin']
+      },
+      {
+        phone: '+989222222222',
+        firstName: 'Seller',
+        lastName: 'One',
+        email: 'seller1@foodin.com',
+        customerCode: 'SELLER001',
+        roles: ['seller']
+      },
+      {
+        phone: '+989333333333',
+        firstName: 'Seller',
+        lastName: 'Two',
+        email: 'seller2@foodin.com',
+        customerCode: 'SELLER002',
+        roles: ['seller']
+      },
+      {
+        phone: '+989444444444',
+        firstName: 'Buyer',
+        lastName: 'One',
+        email: 'buyer1@foodin.com',
+        customerCode: 'BUYER001',
+        roles: ['buyer']
+      }
+    ];
+
+    for (const userData of usersToCreate) {
+      const [user, userCreated] = await User.findOrCreate({
+        where: { phone: userData.phone },
+        defaults: {
+          phone: userData.phone,
+          userType: 'natural',
+          isActive: true,
+          isVerified: true
+        }
+      });
+
+      if (userCreated) {
+        // Create profile
+        await Profile.findOrCreate({
+          where: { userId: user.id },
+          defaults: {
+            userId: user.id,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            customerCode: userData.customerCode
+          }
+        });
+
+        // Assign roles
+        for (const roleName of userData.roles) {
+          await UserRole.findOrCreate({
+            where: {
+              userId: user.id,
+              roleId: roleIds[roleName]
+            },
+            defaults: {
+              userId: user.id,
+              roleId: roleIds[roleName]
+            }
+          });
+        }
+        console.log(`✅ Created ${userData.roles.join('/')} user: ${userData.phone}`);
+      } else {
+        console.log(`ℹ️  User already exists: ${userData.phone}`);
+      }
+    }
+
+    // Create sample products for sellers
+    const seller1 = await User.findOne({ where: { phone: '+989222222222' } });
+    const seller2 = await User.findOne({ where: { phone: '+989333333333' } });
+    const fruitCategory = await Category.findOne({ where: { name: 'Fruits & Vegetables' } });
+    const dairyCategory = await Category.findOne({ where: { name: 'Dairy & Eggs' } });
+    
+    const productsData = [
+      {
+        name: 'Premium Apples',
+        description: 'Organic red apples',
+        salePrice: 2.99,
+        purchasePrice: 2.09, // 70% of selling price
+        quantity: 50,
+        sellerId: seller1.id,
+        categoryId: fruitCategory.id,
+        status: 'approved'
+      },
+      {
+        name: 'Fresh Bananas',
+        description: 'Imported bananas',
+        salePrice: 1.49,
+        purchasePrice: 1.04, // 70% of selling price
+        quantity: 100,
+        sellerId: seller1.id,
+        categoryId: fruitCategory.id,
+        status: 'approved'
+      },
+      {
+        name: 'Organic Milk',
+        description: 'Fresh organic milk',
+        salePrice: 3.99,
+        purchasePrice: 2.79, // 70% of selling price
+        quantity: 30,
+        sellerId: seller2.id,
+        categoryId: dairyCategory.id,
+        status: 'approved'
+      },
+      {
+        name: 'Free-range Eggs',
+        description: 'Farm fresh eggs',
+        salePrice: 4.99,
+        purchasePrice: 3.49, // 70% of selling price
+        quantity: 20,
+        sellerId: seller2.id,
+        categoryId: dairyCategory.id,
+        status: 'approved'
+      }
+    ];
+
+    for (const product of productsData) {
+      const [p, created] = await models.Product.findOrCreate({
+        where: { name: product.name },
+        defaults: product
+      });
+      if (created) {
+        console.log(`  Created product: ${product.name}`);
+      } else {
+        console.log(`  Product already exists: ${product.name}`);
+      }
+    }
+
+    // Create sample order for buyer
+    const buyerUser = await User.findOne({ where: { phone: '+989444444444' } });
+    if (!buyerUser) {
+      console.log('⚠️ Buyer user not found, skipping order creation');
+    } else {
+      // Create order
+      const order = await models.Order.create({
+        buyerId: buyerUser.id,
+        status: 'processing',
+        total: 0, // will calculate
+        paymentStatus: 'pending',
+        deliveryAddress: '123 Test Street, Test City'
+      });
+      
+      // Add order items
+      const apples = await models.Product.findOne({ where: { name: 'Premium Apples' } });
+      const bananas = await models.Product.findOne({ where: { name: 'Fresh Bananas' } });
+      
+      if (!apples || !bananas) {
+        console.log('⚠️ Products not found, skipping order item creation');
+        if (!apples) console.log('  Premium Apples not found');
+        if (!bananas) console.log('  Fresh Bananas not found');
+      } else {
+        const orderItems = [
+            {
+              orderId: order.id,
+              productId: apples.id,
+              quantity: 5,
+              unitPrice: apples.salePrice,
+              subtotal: 5 * apples.salePrice
+            },
+            {
+              orderId: order.id,
+              productId: bananas.id,
+              quantity: 3,
+              unitPrice: bananas.salePrice,
+              subtotal: 3 * bananas.salePrice
+            }
+          ];
+        
+        let totalAmount = 0;
+        for (const item of orderItems) {
+          await models.OrderItem.create(item);
+          totalAmount += item.subtotal;
+        }
+        
+        // Update order total
+        order.total = totalAmount;
+        await order.save();
+        
+        // Group order items by seller
+        const itemsBySeller = {};
+        for (const item of orderItems) {
+          const product = await models.Product.findByPk(item.productId);
+          if (!product) {
+            console.log(`⚠️ Product not found for ID: ${item.productId}`);
+            continue;
+          }
+          if (!product.sellerId) {
+            console.log(`⚠️ Product ${product.name} has no seller ID`);
+            continue;
+          }
+          if (!itemsBySeller[product.sellerId]) {
+            itemsBySeller[product.sellerId] = [];
+          }
+          itemsBySeller[product.sellerId].push(item);
+        }
+
+        // Create invoice and payment for each seller
+        for (const [sellerId, items] of Object.entries(itemsBySeller)) {
+          // Calculate seller total
+          const sellerTotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+          
+          // Get seller user
+          const sellerUser = await models.User.findByPk(sellerId);
+          if (!sellerUser) {
+            console.log(`⚠️ Seller not found for ID: ${sellerId}`);
+            continue;
+          }
+          
+          // Create invoice
+          const invoice = await models.Invoice.create({
+            orderId: order.id,
+            buyerId: buyerUser.id,
+            sellerId: sellerId,
+            total: sellerTotal,
+            status: 'paid',
+            issuedAt: new Date(),
+            dueAt: new Date(new Date().setDate(new Date().getDate() + 30))
+          });
+          
+          // Create payment record
+          await models.Payment.create({
+            invoiceId: invoice.id,
+            amount: sellerTotal,
+            method: 'online',
+            status: 'completed',
+            transactionId: `PAY-${Math.floor(Math.random() * 1000000000)}`
+          });
+
+          // Create delivery confirmation for this invoice
+          await models.DeliveryConfirmation.create({
+            invoiceId: invoice.id,
+            buyerId: buyerUser.id,
+            status: 'shipped',
+            trackingNumber: `TRACK-${Math.floor(Math.random() * 1000000000)}`
+          });
+        }
+        
+        // Update order payment status to paid
+        order.paymentStatus = 'paid';
+        await order.save();
+        
+        console.log(`✅ Created test order #${order.id} for buyer`);
+      }
+    }
+
     console.log('✅ Database seeding completed successfully!');
 
   } catch (error) {

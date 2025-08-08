@@ -3,8 +3,8 @@ const InvoiceItem = require('../models/invoice_item.model');
 const BaseRepository = require('./base.repository');
 
 class InvoiceRepository extends BaseRepository {
-  constructor() {
-    super(Invoice);
+  constructor(sequelize) {
+    super(sequelize, Invoice);
   }
 
   async findByBuyer(buyerId) {
@@ -13,7 +13,7 @@ class InvoiceRepository extends BaseRepository {
       include: [
         {
           model: InvoiceItem,
-          as: 'items',
+          as: 'invoiceItems',
         },
       ],
     });
@@ -24,7 +24,7 @@ class InvoiceRepository extends BaseRepository {
       include: [
         {
           model: InvoiceItem,
-          as: 'items',
+          as: 'invoiceItems',
         },
       ],
     });
@@ -35,7 +35,19 @@ class InvoiceRepository extends BaseRepository {
       include: [
         {
           model: InvoiceItem,
-          as: 'items',
+          as: 'invoiceItems',
+        },
+      ],
+    });
+  }
+  async findByUser(userId, isSeller) {
+    const whereClause = isSeller ? { sellerId: userId } : { buyerId: userId };
+    return await this.model.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: InvoiceItem,
+          as: 'invoiceItems',
         },
       ],
     });

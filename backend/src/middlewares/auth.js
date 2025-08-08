@@ -17,7 +17,7 @@ const authenticate = catchAsync(async (req, res, next) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
 
   // Check if user still exists
-  const currentUser = await req.container.userRepo.findById(decoded.sub);
+  const currentUser = await req.container.userRepo.findWithRoles(decoded.sub);
   if (!currentUser) {
     throw ApiError.unauthorized('The user belonging to this token does no longer exist.');
   }

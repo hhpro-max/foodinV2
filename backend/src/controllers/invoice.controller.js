@@ -33,6 +33,25 @@ class InvoiceController {
       next(error);
     }
   }
+  async getInvoicesByBuyer(req, res, next) {
+    try {
+      const { id: buyerId } = req.user;
+      const invoices = await this.invoiceService.getInvoicesByBuyer(buyerId);
+      res.status(200).json(invoices);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getMyInvoices(req, res, next) {
+    try {
+      const { id: userId, roles } = req.user;
+      const invoices = await this.invoiceService.getMyInvoices(userId, roles);
+      res.status(200).json(invoices);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = InvoiceController;

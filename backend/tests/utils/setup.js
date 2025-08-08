@@ -6,6 +6,7 @@ process.env.JWT_EXPIRES_IN = '7d';
 const sequelize = require('../../src/config/sequelize');
 const { User, Profile, NaturalPerson, LegalPerson } = require('../../src/models');
 const { seedDatabase } = require('../../scripts/seed');
+const app = require('../../src/app');
 
 // Set timeout for tests
 jest.setTimeout(30000);
@@ -17,6 +18,15 @@ beforeAll(async () => {
     await sequelize.sync({ force: true });
     console.log('Database synchronized for tests');
     await seedDatabase({ closeConnection: false });
+    
+    // Initialize the container middleware
+    const containerMiddleware = app._router.stack.find(layer => layer.handle.name === 'containerMiddleware');
+    if (containerMiddleware) {
+      const mockRequest = { app: { get: () => sequelize } };
+      const mockResponse = {};
+      const mockNext = () => {};
+      await containerMiddleware.handle(mockRequest, mockResponse, mockNext);
+    }
   } catch (error) {
     console.error('Unable to synchronize and seed the database:', error);
     process.exit(1);

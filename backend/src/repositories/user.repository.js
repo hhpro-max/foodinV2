@@ -20,6 +20,18 @@ class UserRepository extends BaseRepository {
     });
   }
 
+  async findByRole(roleName) {
+    return this.model.findOne({
+      include: [
+        {
+          model: Role,
+          as: 'roles',
+          where: { name: roleName },
+        },
+      ],
+    });
+  }
+
   async findWithRoles(id) {
     return await this.findById(id, {
       include: ['roles'],

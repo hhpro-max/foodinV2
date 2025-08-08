@@ -1,11 +1,7 @@
 const Joi = require('joi');
 
-const orderId = {
-  params: Joi.object().keys({
-    orderId: Joi.string().uuid().required(),
-  }),
-};
+const createOrderSchema = Joi.object({});
 
 module.exports = {
-  orderId,
+  createOrderSchema,
 };

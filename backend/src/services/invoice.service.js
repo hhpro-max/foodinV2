@@ -20,8 +20,11 @@ class InvoiceService {
 
     for (const item of items) {
       await this.invoiceItemRepository.create({
-        invoice_id: invoice.id,
-        ...item,
+        invoiceId: invoice.id,
+        productId: item.productId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        subtotal: item.quantity * item.unitPrice,
       });
     }
 
@@ -33,6 +36,15 @@ class InvoiceService {
   }
   async getInvoicesByOrderId(orderId) {
     return this.invoiceRepository.findByOrderId(orderId);
+  }
+
+  async getInvoicesByBuyer(buyerId) {
+    return this.invoiceRepository.findByBuyer(buyerId);
+  }
+
+  async getMyInvoices(userId, roles) {
+    const isSeller = roles.some(role => role.name === 'seller');
+    return this.invoiceRepository.findByUser(userId, isSeller);
   }
 }
 

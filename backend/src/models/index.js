@@ -56,6 +56,7 @@ User.hasMany(Invoice, { foreignKey: 'sellerId', as: 'sellerInvoices' });
 User.hasMany(Order, { foreignKey: 'buyerId', as: 'orders' });
 User.hasOne(NaturalPerson, { foreignKey: 'userId', as: 'naturalPerson' });
 User.hasOne(LegalPerson, { foreignKey: 'userId', as: 'legalPerson' });
+User.hasOne(Profile, { foreignKey: 'userId', as: 'profileInfo' });
 
 // Profile associations
 Profile.belongsTo(User, { foreignKey: 'userId', as: 'profileUser' });
@@ -64,51 +65,51 @@ Profile.belongsTo(User, { foreignKey: 'userId', as: 'profileUser' });
 Address.belongsTo(User, { foreignKey: 'userId', as: 'addressUser' });
 
 // Product associations
-Product.belongsTo(User, { foreignKey: 'sellerId', as: 'seller' });
-Product.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
-Product.hasMany(ProductImage, { foreignKey: 'productId', as: 'images' });
-Product.hasMany(ProductApproval, { foreignKey: 'productId', as: 'approvals' });
-Product.belongsToMany(Tag, { through: ProductTag, foreignKey: 'productId', as: 'tags' });
+Product.belongsTo(User, { foreignKey: 'sellerId', as: 'productSeller' });
+Product.belongsTo(Category, { foreignKey: 'categoryId', as: 'productCategory' });
+Product.hasMany(ProductImage, { foreignKey: 'productId', as: 'productImages' });
+Product.hasMany(ProductApproval, { foreignKey: 'productId', as: 'productApprovals' });
+Product.belongsToMany(Tag, { through: ProductTag, foreignKey: 'productId', as: 'productTags' });
 
 // Category associations
-Category.hasMany(Product, { foreignKey: 'categoryId', as: 'products' });
+Category.hasMany(Product, { foreignKey: 'categoryId', as: 'categoryProducts' });
 
 // Cart associations
 Cart.belongsTo(User, { foreignKey: 'userId', as: 'cartUser' });
 Cart.hasMany(CartItem, { foreignKey: 'cartId', as: 'items' });
 
 // CartItem associations
-CartItem.belongsTo(Cart, { foreignKey: 'cartId', as: 'cart' });
+CartItem.belongsTo(Cart, { foreignKey: 'cartId', as: 'cartItemCart' });
 CartItem.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
 
 // Invoice associations
 Invoice.belongsTo(User, { foreignKey: 'buyerId', as: 'buyer' });
 Invoice.belongsTo(User, { foreignKey: 'sellerId', as: 'seller' });
-Invoice.hasMany(InvoiceItem, { foreignKey: 'invoiceId', as: 'items' });
+Invoice.hasMany(InvoiceItem, { foreignKey: 'invoiceId', as: 'invoiceItems' });
 
 // InvoiceItem associations
 InvoiceItem.belongsTo(Invoice, { foreignKey: 'invoiceId', as: 'invoice' });
-InvoiceItem.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
+InvoiceItem.belongsTo(Product, { foreignKey: 'productId', as: 'invoiceProduct' });
 
 // Order associations
-Order.belongsTo(User, { foreignKey: 'buyerId', as: 'buyer' });
-Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'items' });
+Order.belongsTo(User, { foreignKey: 'buyerId', as: 'orderBuyer' });
+Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'orderItems' });
 
 // OrderItem associations
 OrderItem.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
-OrderItem.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
+OrderItem.belongsTo(Product, { foreignKey: 'productId', as: 'orderProduct' });
 
 // Role associations
-Role.belongsToMany(Permission, { through: RolePermission, foreignKey: 'roleId', as: 'permissions' });
-Role.belongsToMany(User, { through: UserRole, foreignKey: 'roleId', as: 'users' });
+Role.belongsToMany(Permission, { through: RolePermission, foreignKey: 'roleId', as: 'rolePermissions' });
+Role.belongsToMany(User, { through: UserRole, foreignKey: 'roleId', as: 'roleUsers' });
 
 // Permission associations
-Permission.belongsToMany(Role, { through: RolePermission, foreignKey: 'permissionId', as: 'roles' });
+Permission.belongsToMany(Role, { through: RolePermission, foreignKey: 'permissionId', as: 'permissionRoles' });
 
 // UserRole associations
-User.belongsToMany(Role, { through: UserRole, foreignKey: 'userId', as: 'roles' });
+User.belongsToMany(Role, { through: UserRole, foreignKey: 'userId', as: 'userRoles' });
 
 // Tag associations
-Tag.belongsToMany(Product, { through: ProductTag, foreignKey: 'tagId', as: 'products' });
+Tag.belongsToMany(Product, { through: ProductTag, foreignKey: 'tagId', as: 'tagProducts' });
 
 module.exports = db;

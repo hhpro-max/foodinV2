@@ -251,11 +251,12 @@ class ProductService {
     const t = await this.productRepo.sequelize.transaction();
 
     try {
-      // Update product status and sale price
+      // Update product status, sale price, and activate product
       await product.update(
         {
           status: 'approved',
           salePrice: approvalData.sale_price,
+          is_active: true,
         },
         { transaction: t }
       );
