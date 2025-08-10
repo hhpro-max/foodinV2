@@ -3,6 +3,7 @@ const OrderItemRepository = require('../repositories/order_item.repository');
 const InvoiceService = require('./invoice.service');
 const CartRepository = require('../repositories/cart.repository');
 const UserRepository = require('../repositories/user.repository');
+const DeliveryConfirmationRepository = require('../repositories/delivery_confirmation.repository');
 const { sequelize } = require('../models');
 
 class OrderService {
@@ -12,6 +13,7 @@ class OrderService {
     this.invoiceService = new InvoiceService(sequelize);
     this.cartRepository = new CartRepository(sequelize);
     this.userRepository = new UserRepository(sequelize);
+    this.deliveryConfirmationRepository = new DeliveryConfirmationRepository(sequelize);
   }
 
   async createOrder(buyerId) {
@@ -56,9 +58,27 @@ class OrderService {
     for (const sellerId in itemsBySeller) {
       const items = itemsBySeller[sellerId];
       // Create seller invoice
-      await this.invoiceService.createInvoice(foodinId, sellerId, order.id, items);
+      const sellerInvoice = await this.invoiceService.createInvoice(
+        foodinId,
+        sellerId,
+        order.id,
+        items
+      );
       // Create buyer invoice
-      await this.invoiceService.createInvoice(buyerId, foodinId, order.id, items);
+      const buyerInvoice = await this.invoiceService.createInvoice(
+        buyerId,
+        foodinId,
+        order.id,
+        items
+      );
+
+      const deliveryCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+      await this.deliveryConfirmationRepository.create({
+        buyerInvoiceId: buyerInvoice.id,
+        sellerInvoiceId: sellerInvoice.id,
+        deliveryCode,
+      });
     }
 
     await this.cartRepository.clearCart(cart.id);

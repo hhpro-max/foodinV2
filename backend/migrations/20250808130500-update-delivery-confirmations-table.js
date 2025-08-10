@@ -2,39 +2,36 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('order_items', {
+    await queryInterface.dropTable('delivery_confirmations');
+    await queryInterface.createTable('delivery_confirmations', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
-      order_id: {
+      buyer_invoice_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'orders',
+          model: 'invoices',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
-      product_id: {
+      seller_invoice_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'products',
+          model: 'invoices',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
-      quantity: {
-        type: Sequelize.INTEGER,
+      delivery_code: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
-      unit_price: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
+      status: {
+        type: Sequelize.ENUM('PENDING', 'CONFIRMED', 'CANCELLED'),
+        defaultValue: 'PENDING',
       },
       created_at: {
         allowNull: false,
@@ -48,6 +45,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('order_items');
+    await queryInterface.dropTable('delivery_confirmations');
   },
 };

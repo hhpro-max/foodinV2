@@ -19,8 +19,8 @@ class BaseRepository {
     return await this.model.findByPk(id, options);
   }
 
-  async findOne(conditions, options = {}) {
-    return await this.model.findOne({ where: conditions, ...options });
+  async findOne(conditions) {
+    return await this.model.findOne(conditions);
   }
 
   async create(data) {

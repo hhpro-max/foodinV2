@@ -8,13 +8,13 @@ class InvoiceService {
   }
 
   async createInvoice(buyerId, sellerId, orderId, items) {
-    const total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+    const totalAmount = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
 
     const invoice = await this.invoiceRepository.create({
       buyerId,
       sellerId,
       orderId,
-      total,
+      totalAmount,
       status: 'pending',
     });
 
@@ -24,7 +24,7 @@ class InvoiceService {
         productId: item.productId,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
-        subtotal: item.quantity * item.unitPrice,
+        totalPrice: item.quantity * item.unitPrice,
       });
     }
 
@@ -44,7 +44,21 @@ class InvoiceService {
 
   async getMyInvoices(userId, roles) {
     const isSeller = roles.some(role => role.name === 'seller');
-    return this.invoiceRepository.findByUser(userId, isSeller);
+    const invoices = await this.invoiceRepository.findByUser(userId, isSeller);
+    
+    return invoices.map(invoice => {
+      const plainInvoice = invoice.get({ plain: true });
+      
+      if (!isSeller) {
+        // For buyers, include delivery code if available
+        const deliveryConfirmation = invoice.DeliveryConfirmationForBuyer;
+        if (deliveryConfirmation) {
+          plainInvoice.deliveryCode = deliveryConfirmation.deliveryCode;
+        }
+      }
+      
+      return plainInvoice;
+    });
   }
 }
 

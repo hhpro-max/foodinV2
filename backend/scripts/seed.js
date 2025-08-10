@@ -354,8 +354,8 @@ async function seedDatabase(options = {}) {
         salePrice: 2.99,
         purchasePrice: 2.09, // 70% of selling price
         quantity: 50,
-        sellerId: seller1.id,
-        categoryId: fruitCategory.id,
+        seller_id: seller1.id,
+        category_id: fruitCategory.id,
         status: 'approved'
       },
       {
@@ -364,8 +364,8 @@ async function seedDatabase(options = {}) {
         salePrice: 1.49,
         purchasePrice: 1.04, // 70% of selling price
         quantity: 100,
-        sellerId: seller1.id,
-        categoryId: fruitCategory.id,
+        seller_id: seller1.id,
+        category_id: fruitCategory.id,
         status: 'approved'
       },
       {
@@ -374,8 +374,8 @@ async function seedDatabase(options = {}) {
         salePrice: 3.99,
         purchasePrice: 2.79, // 70% of selling price
         quantity: 30,
-        sellerId: seller2.id,
-        categoryId: dairyCategory.id,
+        seller_id: seller2.id,
+        category_id: dairyCategory.id,
         status: 'approved'
       },
       {
@@ -384,8 +384,8 @@ async function seedDatabase(options = {}) {
         salePrice: 4.99,
         purchasePrice: 3.49, // 70% of selling price
         quantity: 20,
-        sellerId: seller2.id,
-        categoryId: dairyCategory.id,
+        seller_id: seller2.id,
+        category_id: dairyCategory.id,
         status: 'approved'
       }
     ];
@@ -489,25 +489,25 @@ async function seedDatabase(options = {}) {
             sellerId: sellerId,
             total: sellerTotal,
             status: 'paid',
-            issuedAt: new Date(),
-            dueAt: new Date(new Date().setDate(new Date().getDate() + 30))
+            createdAt: new Date(),
+            updatedAt: new Date()
           });
           
           // Create payment record
           await models.Payment.create({
             invoiceId: invoice.id,
             amount: sellerTotal,
-            method: 'online',
+            paymentMethod: 'online',
             status: 'completed',
             transactionId: `PAY-${Math.floor(Math.random() * 1000000000)}`
           });
 
           // Create delivery confirmation for this invoice
           await models.DeliveryConfirmation.create({
-            invoiceId: invoice.id,
-            buyerId: buyerUser.id,
-            status: 'shipped',
-            trackingNumber: `TRACK-${Math.floor(Math.random() * 1000000000)}`
+            buyerInvoiceId: invoice.id,
+            sellerInvoiceId: invoice.id,
+            deliveryCode: `TRACK-${Math.floor(Math.random() * 1000000000)}`,
+            status: 'PENDING'
           });
         }
         

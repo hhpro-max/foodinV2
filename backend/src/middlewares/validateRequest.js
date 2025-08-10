@@ -1,9 +1,9 @@
 const Joi = require('joi');
 const ApiError = require('../utils/ApiError');
 
-const validateRequest = (schema) => {
+const validateRequest = (validationSchema) => {
   return (req, res, next) => {
-    const { error } = schema.validate(req.body, {
+    const { error } = validationSchema.validate(req.body, {
       abortEarly: false,
       allowUnknown: false,
       stripUnknown: true,

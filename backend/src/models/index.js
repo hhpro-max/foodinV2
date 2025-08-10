@@ -45,12 +45,13 @@ const {
   ProductApproval,
   NaturalPerson,
   LegalPerson,
+  DeliveryConfirmation,
 } = db;
 
 // User associations
 User.hasMany(Address, { foreignKey: 'userId', as: 'addresses' });
 User.hasMany(Product, { foreignKey: 'sellerId', as: 'sellerProducts' });
-User.hasOne(Cart, { foreignKey: 'userId', as: 'cart' });
+User.hasOne(Cart, { foreignKey: 'buyerId', as: 'cart' });
 User.hasMany(Invoice, { foreignKey: 'buyerId', as: 'buyerInvoices' });
 User.hasMany(Invoice, { foreignKey: 'sellerId', as: 'sellerInvoices' });
 User.hasMany(Order, { foreignKey: 'buyerId', as: 'orders' });
@@ -75,7 +76,7 @@ Product.belongsToMany(Tag, { through: ProductTag, foreignKey: 'productId', as: '
 Category.hasMany(Product, { foreignKey: 'categoryId', as: 'categoryProducts' });
 
 // Cart associations
-Cart.belongsTo(User, { foreignKey: 'userId', as: 'cartUser' });
+Cart.belongsTo(User, { foreignKey: 'buyerId', as: 'cartUser' });
 Cart.hasMany(CartItem, { foreignKey: 'cartId', as: 'items' });
 
 // CartItem associations
@@ -86,6 +87,14 @@ CartItem.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
 Invoice.belongsTo(User, { foreignKey: 'buyerId', as: 'buyer' });
 Invoice.belongsTo(User, { foreignKey: 'sellerId', as: 'seller' });
 Invoice.hasMany(InvoiceItem, { foreignKey: 'invoiceId', as: 'invoiceItems' });
+Invoice.hasOne(DeliveryConfirmation, {
+  foreignKey: 'buyerInvoiceId',
+  as: 'DeliveryConfirmationForBuyer',
+});
+Invoice.hasOne(DeliveryConfirmation, {
+  foreignKey: 'sellerInvoiceId',
+  as: 'DeliveryConfirmationForSeller',
+});
 
 // InvoiceItem associations
 InvoiceItem.belongsTo(Invoice, { foreignKey: 'invoiceId', as: 'invoice' });

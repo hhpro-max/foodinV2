@@ -33,9 +33,10 @@ const Invoice = sequelize.define('Invoice', {
       key: 'id',
     },
   },
-  total: {
+  totalAmount: {
     type: DataTypes.FLOAT,
     allowNull: false,
+    field: 'total_amount',
   },
   status: {
     type: DataTypes.ENUM('pending', 'paid', 'cancelled'),

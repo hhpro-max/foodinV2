@@ -187,6 +187,45 @@ const options = {
             }
           }
         },
+        DeliveryConfirmation: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000'
+            },
+            buyerInvoiceId: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000'
+            },
+            sellerInvoiceId: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000'
+            },
+            deliveryCode: {
+              type: 'string',
+              example: '123456'
+            },
+            status: {
+              type: 'string',
+              enum: ['PENDING', 'CONFIRMED', 'CANCELLED'],
+              example: 'PENDING'
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2025-08-08T13:00:00.000Z'
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2025-08-08T13:00:00.000Z'
+            }
+          }
+        },
         Invoice: {
           type: 'object',
           properties: {

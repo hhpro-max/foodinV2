@@ -33,9 +33,10 @@ const InvoiceItem = sequelize.define('InvoiceItem', {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
-  subtotal: {
+  totalPrice: {
     type: DataTypes.FLOAT,
     allowNull: false,
+    field: 'total_price',
   },
 }, {
   timestamps: true,

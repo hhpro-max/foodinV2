@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.addColumn('invoices', 'orderId', {
+    await queryInterface.addColumn('invoices', 'order_id', {
       type: Sequelize.UUID,
       allowNull: false,
       references: {
@@ -15,6 +15,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.removeColumn('invoices', 'orderId');
+    await queryInterface.removeColumn('invoices', 'order_id');
   },
 };
