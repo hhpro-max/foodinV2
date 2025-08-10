@@ -91,6 +91,9 @@ const globalErrorHandler = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
+  // Log the original error for debugging
+  console.error('ORIGINAL ERROR:', err);
+
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else {

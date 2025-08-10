@@ -20,7 +20,10 @@ class BaseRepository {
   }
 
   async findOne(conditions) {
-    return await this.model.findOne(conditions);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('BaseRepository.findOne - conditions:', JSON.stringify(conditions));
+    }
+    return await this.model.findOne({ where: conditions });
   }
 
   async create(data) {

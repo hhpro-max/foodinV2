@@ -5,7 +5,12 @@ const confirmDelivery = catchAsync(async (req, res) => {
   const { delivery_code, seller_invoice_id } = req.body;
   const sellerId = req.user.id;
 
-  const deliveryConfirmation = await deliveryConfirmationService.confirmDelivery(delivery_code, seller_invoice_id, sellerId);
+  // Convert snake_case to camelCase to match service expectations
+  const deliveryConfirmation = await deliveryConfirmationService.confirmDelivery(
+    delivery_code,
+    seller_invoice_id,
+    sellerId
+  );
 
   res.status(200).json({
     status: 'success',

@@ -7,34 +7,39 @@ class CartRepository extends BaseRepository {
   }
 
   async findByBuyer(buyerId) {
-    return await this.findOne(
-      { buyerId },
-      {
-        include: [
-          {
-            model: CartItem,
-            as: 'items',
-            include: [
-              {
-                model: Product,
-                as: 'product',
-                include: [
-                  {
-                    model: User,
-                    as: 'productSeller',
-                    include: [{ model: Profile, as: 'profileInfo' }],
-                  },
-                  {
-                    model: ProductImage,
-                    as: 'productImages',
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      }
-    );
+    return await this.model.findOne({
+      where: { buyerId },
+      include: [
+        {
+          model: CartItem,
+          as: 'items',
+          include: [
+            {
+              model: Product,
+              as: 'product',
+              attributes: ['id', 'name', 'description'],
+              include: [
+                {
+                  model: User,
+                  as: 'productSeller',
+                  attributes: ['id'],
+                  include: [{
+                    model: Profile,
+                    as: 'profileInfo',
+                    attributes: ['firstName', 'lastName']
+                  }],
+                },
+                {
+                  model: ProductImage,
+                  as: 'productImages',
+                  attributes: [['url', 'imageUrl']]
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
   }
 
   async findOrCreateCart(buyerId, sessionId = null) {

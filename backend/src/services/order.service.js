@@ -32,7 +32,13 @@ class OrderService {
 
     const itemsBySeller = {};
     for (const item of cart.items) {
-      const sellerId = item.product.sellerId;
+      // Correctly access sellerId through productSeller association
+      const sellerId = item.product.productSeller.id;
+      
+      if (!sellerId) {
+        throw new Error(`Product ${item.productId} has no sellerId`);
+      }
+      
       if (!itemsBySeller[sellerId]) {
         itemsBySeller[sellerId] = [];
       }

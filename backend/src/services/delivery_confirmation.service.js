@@ -11,10 +11,8 @@ class DeliveryConfirmationService {
 
   async confirmDelivery(deliveryCode, sellerInvoiceId, sellerId) {
     const deliveryConfirmation = await this.deliveryConfirmationRepository.findOne({
-      where: {
-        deliveryCode,
-        sellerInvoiceId
-      },
+      deliveryCode,
+      sellerInvoiceId
     });
 
     if (!deliveryConfirmation) {

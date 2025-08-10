@@ -8,7 +8,12 @@ const getCart = catchAsync(async (req, res) => {
   
   res.status(200).json({
     status: 'success',
-    data: result,
+    data: {
+      id: result.id,
+      buyer_id: result.buyerId,
+      items: result.items || [],
+      total: result.summary.totalPrice ? parseFloat(result.summary.totalPrice) : 0
+    },
   });
 });
 
@@ -24,11 +29,23 @@ const addToCart = catchAsync(async (req, res) => {
     throw ApiError.badRequest('Quantity must be positive');
   }
   
-  const result = await req.container.cartService.addToCart(buyerId, product_id, quantity);
+  const cart = await req.container.cartService.addToCart(buyerId, product_id, quantity);
   
   res.status(200).json({
     status: 'success',
-    data: result,
+    data: {
+      id: cart.id,
+      buyer_id: cart.buyerId,
+      items: cart.items.map(item => ({
+        id: item.id,
+        product_id: item.product_id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        total: item.total
+      })),
+      total: cart.summary.totalPrice ? parseFloat(cart.summary.totalPrice) : 0
+    },
     message: 'Item added to cart successfully',
   });
 });

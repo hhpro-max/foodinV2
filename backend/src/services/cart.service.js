@@ -8,16 +8,58 @@ class CartService {
   }
 
   async getCart(buyerId) {
+    console.log(`[CartService] Getting cart for buyer: ${buyerId}`);
     const cart = await this.cartRepo.findOrCreateCart(buyerId);
+    console.log(`[CartService] Found/created cart: ${cart.id}`);
+    
     // Validate cart items and remove invalid ones
     await this.validateAndCleanCart(cart.id);
-    // Get updated cart with summary
+    
+    // Get updated cart with items and summary
     const updatedCart = await this.cartRepo.findByBuyer(buyerId);
+    console.log(`[CartService] Updated cart: ${JSON.stringify(updatedCart, null, 2)}`);
+    
     const summary = await this.cartRepo.getCartSummary(cart.id);
-    return {
-      ...updatedCart.toJSON(),
-      summary,
+    console.log(`[CartService] Cart summary: ${JSON.stringify(summary)}`);
+    
+    if (!updatedCart) {
+      console.error('[CartService] No cart found after validation');
+      return {
+        id: cart.id,
+        buyerId,
+        items: [],
+        summary
+      };
+    }
+    
+    // Convert Sequelize model to JSON and add items array
+    const cartData = updatedCart.toJSON();
+    console.log(`[CartService] Cart data: ${JSON.stringify(cartData)}`);
+    
+    // Ensure items are properly mapped
+    const response = {
+      id: cartData.id,
+      buyerId: cartData.buyerId,
+      createdAt: cartData.createdAt,
+      updatedAt: cartData.updatedAt,
+      items: cartData.items ? cartData.items.map(item => {
+        // Handle cases where product might be null
+        const product = item.product || {};
+        console.log(`[CartService] Processing item: ${item.id}, product: ${JSON.stringify(product)}`);
+        return {
+          id: item.id,
+          product_id: item.productId,
+          name: product.name || null,
+          price: item.unitPrice,
+          quantity: item.quantity,
+          total: item.quantity * item.unitPrice
+        };
+      }) : [],
+      summary
     };
+    
+    console.log(`[CartService] Final cart response: ${JSON.stringify(response)}`);
+    return response;
   }
 
   async addToCart(buyerId, productId, quantity = 1) {
