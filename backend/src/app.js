@@ -42,6 +42,7 @@ const notificationRoutes = require('./routes/notification.routes');
 const authRoutes = require('./routes/auth.routes');
 const orderRoutes = require('./routes/order.routes');
 const deliveryConfirmationRoutes = require('./routes/delivery_confirmation.routes');
+const deliveryInformationRoutes = require('./routes/delivery_information.routes');
 
 const app = express();
 
@@ -148,6 +149,7 @@ apiRouter.use('/notifications', notificationRoutes(sequelize));
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/orders', orderRoutes());
 apiRouter.use('/delivery-confirmations', deliveryConfirmationRoutes);
+apiRouter.use('/delivery-informations', deliveryInformationRoutes);
 
 app.use('/api/v1', apiRouter);
 

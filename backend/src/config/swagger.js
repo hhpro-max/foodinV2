@@ -16,6 +16,176 @@ const options = {
     ],
     components: {
       schemas: {
+        Address: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              readOnly: true,
+              example: '123e4567-e89b-12d3-a456-426614174000'
+            },
+            title: {
+              type: 'string',
+              minLength: 2,
+              maxLength: 100,
+              example: 'Home'
+            },
+            fullAddress: {
+              type: 'string',
+              minLength: 5,
+              maxLength: 500,
+              example: '123 Main St'
+            },
+            city: {
+              type: 'string',
+              minLength: 2,
+              maxLength: 100,
+              example: 'Tehran'
+            },
+            postalCode: {
+              type: 'string',
+              pattern: '^\\d{10}$',
+              example: '1234567890'
+            },
+            gps_latitude: {
+              type: 'number',
+              format: 'float',
+              minimum: -90,
+              maximum: 90,
+              example: 35.6895
+            },
+            gps_longitude: {
+              type: 'number',
+              format: 'float',
+              minimum: -180,
+              maximum: 180,
+              example: 51.3890
+            },
+            isPrimary: {
+              type: 'boolean',
+              example: false
+            },
+            isWarehouse: {
+              type: 'boolean',
+              example: false
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              readOnly: true,
+              example: '2023-01-01T00:00:00.000Z'
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              readOnly: true,
+              example: '2023-01-01T00:00:00.000Z'
+            },
+          },
+          required: ['title', 'fullAddress', 'city'],
+        },
+        AddressInput: {
+          type: 'object',
+          properties: {
+            title: {
+              type: 'string',
+              minLength: 2,
+              maxLength: 100,
+              example: 'Home'
+            },
+            full_address: {
+              type: 'string',
+              minLength: 5,
+              maxLength: 500,
+              example: '123 Main St'
+            },
+            city: {
+              type: 'string',
+              minLength: 2,
+              maxLength: 100,
+              example: 'Tehran'
+            },
+            postal_code: {
+              type: 'string',
+              pattern: '^\\d{10}$',
+              example: '1234567890'
+            },
+            gps_latitude: {
+              type: 'number',
+              format: 'float',
+              minimum: -90,
+              maximum: 90,
+              example: 35.6895
+            },
+            gps_longitude: {
+              type: 'number',
+              format: 'float',
+              minimum: -180,
+              maximum: 180,
+              example: 51.3890
+            },
+            is_primary: {
+              type: 'boolean',
+              example: false
+            },
+            is_warehouse: {
+              type: 'boolean',
+              example: false
+            },
+          },
+          required: ['title', 'fullAddress', 'city'],
+        },
+        AddressUpdate: {
+          type: 'object',
+          properties: {
+            title: {
+              type: 'string',
+              minLength: 2,
+              maxLength: 100,
+              example: 'Home'
+            },
+            fullAddress: {
+              type: 'string',
+              minLength: 5,
+              maxLength: 500,
+              example: '123 Main St'
+            },
+            city: {
+              type: 'string',
+              minLength: 2,
+              maxLength: 100,
+              example: 'Tehran'
+            },
+            postalCode: {
+              type: 'string',
+              pattern: '^\\d{10}$',
+              example: '1234567890'
+            },
+            gps_latitude: {
+              type: 'number',
+              format: 'float',
+              minimum: -90,
+              maximum: 90,
+              example: 35.6895
+            },
+            gps_longitude: {
+              type: 'number',
+              format: 'float',
+              minimum: -180,
+              maximum: 180,
+              example: 51.3890
+            },
+            isPrimary: {
+              type: 'boolean',
+              example: false
+            },
+            isWarehouse: {
+              type: 'boolean',
+              example: false
+            },
+          },
+        },
         User: {
           type: 'object',
           properties: {
@@ -225,6 +395,107 @@ const options = {
               example: '2025-08-08T13:00:00.000Z'
             }
           }
+        },
+        Address: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              readOnly: true,
+              example: '123e4567-e89b-12d3-a456-426614174000'
+            },
+            title: {
+              type: 'string',
+              minLength: 2,
+              maxLength: 100,
+              example: 'Home'
+            },
+            address_line: {
+              type: 'string',
+              minLength: 5,
+              maxLength: 500,
+              example: '123 Main St'
+            },
+            city: {
+              type: 'string',
+              minLength: 2,
+              maxLength: 100,
+              example: 'Tehran'
+            },
+            postal_code: {
+              type: 'string',
+              pattern: '^\\d{10}$',
+              example: '1234567890'
+            },
+            latitude: {
+              type: 'number',
+              format: 'float',
+              minimum: -90,
+              maximum: 90,
+              example: 35.6895
+            },
+            longitude: {
+              type: 'number',
+              format: 'float',
+              minimum: -180,
+              maximum: 180,
+              example: 51.3890
+            },
+            is_primary: {
+              type: 'boolean',
+              example: false
+            },
+            is_warehouse: {
+              type: 'boolean',
+              example: false
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              readOnly: true,
+              example: '2023-01-01T00:00:00.000Z'
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              readOnly: true,
+              example: '2023-01-01T00:00:00.000Z'
+            },
+          },
+          required: ['title', 'address_line', 'city'],
+        },
+        DeliveryInformation: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+            },
+            buyerAddressId: {
+              type: 'string',
+              format: 'uuid',
+            },
+            sellerAddressId: {
+              type: 'string',
+              format: 'uuid',
+            },
+            deliveryDateRequested: {
+              type: 'string',
+              format: 'date-time',
+            },
+            buyerInvoiceId: {
+              type: 'string',
+              format: 'uuid',
+            },
+            sellerInvoiceId: {
+              type: 'string',
+              format: 'uuid',
+            },
+            status: {
+              type: 'string',
+            },
+          },
         },
         Invoice: {
           type: 'object',

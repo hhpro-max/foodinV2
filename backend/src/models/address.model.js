@@ -32,6 +32,14 @@ const Address = sequelize.define('Address', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  gps_latitude: {
+    type: DataTypes.DECIMAL(10, 8),
+    allowNull: true,
+  },
+  gps_longitude: {
+    type: DataTypes.DECIMAL(11, 8),
+    allowNull: true,
+  },
   isPrimary: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,

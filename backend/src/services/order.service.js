@@ -4,6 +4,8 @@ const InvoiceService = require('./invoice.service');
 const CartRepository = require('../repositories/cart.repository');
 const UserRepository = require('../repositories/user.repository');
 const DeliveryConfirmationRepository = require('../repositories/delivery_confirmation.repository');
+const DeliveryInformationRepository = require('../repositories/delivery_information.repository');
+const AddressRepository = require('../repositories/address.repository');
 const { sequelize } = require('../models');
 
 class OrderService {
@@ -14,6 +16,8 @@ class OrderService {
     this.cartRepository = new CartRepository(sequelize);
     this.userRepository = new UserRepository(sequelize);
     this.deliveryConfirmationRepository = new DeliveryConfirmationRepository(sequelize);
+    this.deliveryInformationRepository = new DeliveryInformationRepository(sequelize);
+    this.addressRepository = new AddressRepository(sequelize);
   }
 
   async createOrder(buyerId) {
@@ -84,6 +88,25 @@ class OrderService {
         buyerInvoiceId: buyerInvoice.id,
         sellerInvoiceId: sellerInvoice.id,
         deliveryCode,
+      });
+
+      const buyerAddress = await this.addressRepository.findPrimaryAddress(buyerId);
+      const sellerAddress = await this.addressRepository.findWarehouseAddress(sellerId);
+
+      if (!buyerAddress || !sellerAddress) {
+        throw new Error('Buyer or seller address not found');
+      }
+
+      const deliveryDateRequested = new Date();
+      deliveryDateRequested.setDate(deliveryDateRequested.getDate() + 1);
+
+      await this.deliveryInformationRepository.create({
+        buyerAddressId: buyerAddress.id,
+        sellerAddressId: sellerAddress.id,
+        deliveryDateRequested,
+        buyerInvoiceId: buyerInvoice.id,
+        sellerInvoiceId: sellerInvoice.id,
+        status: 'pending',
       });
     }
 

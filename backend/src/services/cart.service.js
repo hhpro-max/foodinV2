@@ -8,22 +8,17 @@ class CartService {
   }
 
   async getCart(buyerId) {
-    console.log(`[CartService] Getting cart for buyer: ${buyerId}`);
     const cart = await this.cartRepo.findOrCreateCart(buyerId);
-    console.log(`[CartService] Found/created cart: ${cart.id}`);
     
     // Validate cart items and remove invalid ones
     await this.validateAndCleanCart(cart.id);
     
     // Get updated cart with items and summary
     const updatedCart = await this.cartRepo.findByBuyer(buyerId);
-    console.log(`[CartService] Updated cart: ${JSON.stringify(updatedCart, null, 2)}`);
     
     const summary = await this.cartRepo.getCartSummary(cart.id);
-    console.log(`[CartService] Cart summary: ${JSON.stringify(summary)}`);
     
     if (!updatedCart) {
-      console.error('[CartService] No cart found after validation');
       return {
         id: cart.id,
         buyerId,
@@ -34,7 +29,6 @@ class CartService {
     
     // Convert Sequelize model to JSON and add items array
     const cartData = updatedCart.toJSON();
-    console.log(`[CartService] Cart data: ${JSON.stringify(cartData)}`);
     
     // Ensure items are properly mapped
     const response = {
@@ -45,7 +39,6 @@ class CartService {
       items: cartData.items ? cartData.items.map(item => {
         // Handle cases where product might be null
         const product = item.product || {};
-        console.log(`[CartService] Processing item: ${item.id}, product: ${JSON.stringify(product)}`);
         return {
           id: item.id,
           product_id: item.productId,
@@ -58,7 +51,6 @@ class CartService {
       summary
     };
     
-    console.log(`[CartService] Final cart response: ${JSON.stringify(response)}`);
     return response;
   }
 

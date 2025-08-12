@@ -55,7 +55,7 @@ router.get('/', addressController.getUserAddresses);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Address'
+ *             $ref: '#/components/schemas/AddressInput'
  *     responses:
  *       201:
  *         description: Address created successfully
@@ -134,13 +134,13 @@ router.get('/warehouse', addressController.getWarehouseAddress);
  *       - bearerAuth: []
  *     parameters:
  *       - in: query
- *         name: latitude
+ *         name: gps_latitude
  *         required: true
  *         schema:
  *           type: number
  *           format: float
  *       - in: query
- *         name: longitude
+ *         name: gps_longitude
  *         required: true
  *         schema:
  *           type: number
@@ -184,7 +184,9 @@ router.get('/search/nearby', validateQuery(searchNearbySchema), addressControlle
  *           schema:
  *             type: object
  *             properties:
- *               address:
+ *               fullAddress:
+ *                 type: string
+ *               city:
  *                 type: string
  *     responses:
  *       200:
@@ -194,9 +196,9 @@ router.get('/search/nearby', validateQuery(searchNearbySchema), addressControlle
  *             schema:
  *               type: object
  *               properties:
- *                 latitude:
+ *                 gps_latitude:
  *                   type: number
- *                 longitude:
+ *                 gps_longitude:
  *                   type: number
  *       400:
  *         description: Validation error
@@ -222,10 +224,10 @@ router.post('/geocode', validateRequest(geocodeSchema), addressController.geocod
  *           schema:
  *             type: object
  *             properties:
- *               latitude:
+ *               gps_latitude:
  *                 type: number
  *                 format: float
- *               longitude:
+ *               gps_longitude:
  *                 type: number
  *                 format: float
  *     responses:
@@ -302,7 +304,13 @@ router.get('/:addressId',
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Address'
+ *             $ref: '#/components/schemas/AddressUpdate'
+ *           example:
+ *             title: "Work"
+ *             fullAddress: "456 Business Ave"
+ *             city: "Tehran"
+ *             postalCode: "0987654321"
+ *             isPrimary: true
  *     responses:
  *       200:
  *         description: Address updated successfully

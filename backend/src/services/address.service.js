@@ -23,7 +23,7 @@ class AddressService {
     }
 
     // Verify ownership
-    if (address.user_id !== userId) {
+    if (address.userId !== userId) {
       throw ApiError.forbidden('You can only access your own addresses');
     }
 
@@ -36,20 +36,32 @@ class AddressService {
       throw ApiError.notFound('User not found');
     }
 
+    // Convert snake_case keys to camelCase for Sequelize
+    const mappedData = {
+      title: addressData.title,
+      fullAddress: addressData.full_address,
+      city: addressData.city,
+      postalCode: addressData.postal_code,
+      gpsLatitude: addressData.gps_latitude,
+      gpsLongitude: addressData.gps_longitude,
+      isPrimary: addressData.is_primary,
+      isWarehouse: addressData.is_warehouse
+    };
+
     // Validate coordinates if provided
-    if (addressData.latitude && addressData.longitude) {
-      this.validateCoordinates(addressData.latitude, addressData.longitude);
+    if (mappedData.gpsLatitude && mappedData.gpsLongitude) {
+      this.validateCoordinates(mappedData.gpsLatitude, mappedData.gpsLongitude);
     }
 
     // If this is the user's first address, make it primary
     const existingAddresses = await this.addressRepo.findByUserId(userId);
     if (existingAddresses.length === 0) {
-      addressData.is_primary = true;
+      mappedData.isPrimary = true;
     }
 
     const newAddress = await this.addressRepo.createWithFlags(userId, {
-      user_id: userId,
-      ...addressData,
+      userId,
+      ...mappedData,
     });
 
     return newAddress;
@@ -62,19 +74,31 @@ class AddressService {
     }
 
     // Verify ownership
-    if (address.user_id !== userId) {
+    if (address.userId !== userId) {
       throw ApiError.forbidden('You can only update your own addresses');
     }
 
+    // Convert snake_case keys to camelCase for Sequelize
+    const mappedData = {
+      title: addressData.title,
+      fullAddress: addressData.full_address,
+      city: addressData.city,
+      postalCode: addressData.postal_code,
+      gpsLatitude: addressData.gps_latitude,
+      gpsLongitude: addressData.gps_longitude,
+      isPrimary: addressData.is_primary,
+      isWarehouse: addressData.is_warehouse
+    };
+
     // Validate coordinates if provided
-    if (addressData.latitude && addressData.longitude) {
-      this.validateCoordinates(addressData.latitude, addressData.longitude);
+    if (mappedData.gpsLatitude && mappedData.gpsLongitude) {
+      this.validateCoordinates(mappedData.gpsLatitude, mappedData.gpsLongitude);
     }
 
     const updatedAddress = await this.addressRepo.updateWithFlags(
       addressId,
       userId,
-      addressData
+      mappedData
     );
 
     if (!updatedAddress) {
@@ -91,7 +115,7 @@ class AddressService {
     }
 
     // Verify ownership
-    if (address.user_id !== userId) {
+    if (address.userId !== userId) {
       throw ApiError.forbidden('You can only delete your own addresses');
     }
 
@@ -104,7 +128,7 @@ class AddressService {
     const deletedAddress = await this.addressRepo.deleteUserAddress(addressId, userId);
 
     // If we deleted the primary address, set another one as primary
-    if (address.is_primary) {
+    if (address.isPrimary) {
       const remainingAddresses = await this.addressRepo.findByUserId(userId);
       if (remainingAddresses.length > 0) {
         await this.addressRepo.setPrimaryAddress(userId, remainingAddresses[0].id);
@@ -121,7 +145,7 @@ class AddressService {
     }
 
     // Verify ownership
-    if (address.user_id !== userId) {
+    if (address.userId !== userId) {
       throw ApiError.forbidden('You can only modify your own addresses');
     }
 
@@ -136,7 +160,7 @@ class AddressService {
     }
 
     // Verify ownership
-    if (address.user_id !== userId) {
+    if (address.userId !== userId) {
       throw ApiError.forbidden('You can only modify your own addresses');
     }
 

@@ -120,15 +120,15 @@ const getWarehouseAddress = catchAsync(async (req, res) => {
 });
 
 const searchNearbyAddresses = catchAsync(async (req, res) => {
-  const { latitude, longitude, radius = 10, limit = 50 } = req.query;
+  const { gps_latitude, gps_longitude, radius = 10, limit = 50 } = req.query;
   
-  if (!latitude || !longitude) {
-    throw ApiError.badRequest('Latitude and longitude are required');
+  if (!gps_latitude || !gps_longitude) {
+    throw ApiError.badRequest('gps_latitude and gps_longitude are required');
   }
   
   const addresses = await req.container.addressService.searchNearbyAddresses(
-    parseFloat(latitude),
-    parseFloat(longitude),
+    parseFloat(gps_latitude),
+    parseFloat(gps_longitude),
     parseInt(radius),
     parseInt(limit)
   );
@@ -140,13 +140,13 @@ const searchNearbyAddresses = catchAsync(async (req, res) => {
 });
 
 const geocodeAddress = catchAsync(async (req, res) => {
-  const { address_line, city } = req.body;
+  const { full_address, city } = req.body;
   
-  if (!address_line || !city) {
-    throw ApiError.badRequest('Address line and city are required');
+  if (!full_address || !city) {
+    throw ApiError.badRequest('full_address and city are required');
   }
   
-  const coordinates = await req.container.addressService.geocodeAddress(address_line, city);
+  const coordinates = await req.container.addressService.geocodeAddress(full_address, city);
   
   res.status(200).json({
     status: 'success',
@@ -155,15 +155,15 @@ const geocodeAddress = catchAsync(async (req, res) => {
 });
 
 const reverseGeocode = catchAsync(async (req, res) => {
-  const { latitude, longitude } = req.body;
+  const { gps_latitude, gps_longitude } = req.body;
   
-  if (!latitude || !longitude) {
-    throw ApiError.badRequest('Latitude and longitude are required');
+  if (!gps_latitude || !gps_longitude) {
+    throw ApiError.badRequest('gps_latitude and gps_longitude are required');
   }
   
   const addressInfo = await req.container.addressService.reverseGeocode(
-    parseFloat(latitude),
-    parseFloat(longitude)
+    parseFloat(gps_latitude),
+    parseFloat(gps_longitude)
   );
   
   res.status(200).json({
