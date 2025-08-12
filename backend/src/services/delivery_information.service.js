@@ -1,8 +1,9 @@
+const { sequelize } = require('../models');
 const DeliveryInformationRepository = require('../repositories/delivery_information.repository');
 
 class DeliveryInformationService {
   constructor() {
-    this.deliveryInformationRepository = new DeliveryInformationRepository();
+    this.deliveryInformationRepository = new DeliveryInformationRepository(sequelize);
   }
 
   async createDeliveryInformation(data) {

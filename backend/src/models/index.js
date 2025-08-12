@@ -46,6 +46,7 @@ const {
   NaturalPerson,
   LegalPerson,
   DeliveryConfirmation,
+  DeliveryInformation
 } = db;
 
 // User associations

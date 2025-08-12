@@ -29,4 +29,4 @@ class DeliveryInformationController {
   });
 }
 
-module.exports = new DeliveryInformationController();
+module.exports = DeliveryInformationController;

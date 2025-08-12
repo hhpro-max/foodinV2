@@ -4,7 +4,8 @@ const {
   validateParams,
 } = require('../middlewares/validateRequest');
 const deliveryInformationValidation = require('../validations/delivery_information.validation');
-const deliveryInformationController = require('../controllers/delivery_information.controller');
+const DeliveryInformationController = require('../controllers/delivery_information.controller');
+const deliveryInformationController = new DeliveryInformationController();
 
 const router = express.Router();
 
