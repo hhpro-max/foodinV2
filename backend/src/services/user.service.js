@@ -318,7 +318,14 @@ class UserService {
   }
 
   sanitizeUser(user) {
-    const { password_hash, ...sanitizedUser } = user;
+    // Convert Sequelize model instance to plain object if needed
+    let userData = user;
+    if (user && typeof user.toJSON === 'function') {
+      userData = user.toJSON();
+    }
+    
+    // Remove password_hash if it exists
+    const { password_hash, ...sanitizedUser } = userData;
     return sanitizedUser;
   }
 

@@ -269,6 +269,48 @@ const options = {
             },
           },
         },
+        Category: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000'
+            },
+            name: {
+              type: 'string',
+              minLength: 2,
+              maxLength: 100,
+              example: 'Fruits'
+            },
+            description: {
+              type: 'string',
+              maxLength: 500,
+              example: 'Fresh fruits from local farms'
+            },
+            parentId: {
+              type: 'string',
+              format: 'uuid',
+              nullable: true,
+              example: '123e4567-e89b-12d3-a456-426614174000'
+            },
+            isActive: {
+              type: 'boolean',
+              example: true
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2023-01-01T00:00:00.000Z'
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2023-01-01T00:00:00.000Z'
+            }
+          },
+          required: ['name']
+        },
         CartItemRequest: {
           type: 'object',
           properties: {
@@ -522,6 +564,17 @@ const options = {
             }
           },
           required: ['orderId', 'amount', 'dueDate']
+        },
+        ChooseRole: {
+          type: 'object',
+          properties: {
+            role: {
+              type: 'string',
+              enum: ['buyer', 'seller'],
+              example: 'buyer'
+            }
+          },
+          required: ['role']
         },
       },
       securitySchemes: {

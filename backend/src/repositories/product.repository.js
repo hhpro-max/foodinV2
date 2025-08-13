@@ -174,6 +174,21 @@ class ProductRepository extends BaseRepository {
       limit,
     });
   }
-}
 
+
+  // New method to fetch approved products with tags and images but without seller/profile info
+  async findApprovedWithTagsAndImages(conditions = {}, orderBy = [['createdAt', 'DESC']], limit = null, offset = null) {
+    return await Product.findAll({
+      where: { status: 'approved', is_active: true, ...conditions },
+      include: [
+        { model: Category, as: 'category' },
+        { model: ProductImage, as: 'images', order: [['displayOrder', 'ASC']] },
+        { model: Tag, as: 'tags' },
+      ],
+      order: orderBy,
+      limit,
+      offset,
+    });
+  }
+}
 module.exports = ProductRepository;

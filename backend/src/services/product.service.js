@@ -202,9 +202,9 @@ class ProductService {
 
     let products;
     if (search) {
-      products = await this.productRepo.search(search, conditions, limit, offset);
+      products = await this.productRepo.searchProducts(search, conditions, limit, offset);
     } else {
-      products = await this.productRepo.findAll(
+      products = await this.productRepo.findApprovedWithTagsAndImages(
         conditions,
         [['createdAt', 'DESC']],
         limit,

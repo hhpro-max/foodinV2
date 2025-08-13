@@ -145,7 +145,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      registration_number: {
+      economic_code: {
         type: Sequelize.STRING,
         allowNull: true,
       },

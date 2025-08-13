@@ -43,7 +43,7 @@ const assignRoleSchema = Joi.object({
 });
 
 const chooseRoleSchema = Joi.object({
-  role: Joi.string().valid('customer', 'seller').required(),
+  role: Joi.string().valid('buyer', 'seller').required(),
 });
 
 module.exports = {

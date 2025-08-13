@@ -31,6 +31,7 @@ const ProductService = require('./services/product.service');
 const CartService = require('./services/cart.service');
 const OTPService = require('./services/otp.service');
 const AuthService = require('./services/auth.service');
+const CategoryService = require('./services/category.service');
 
 // Import routes
 const userRoutes = require('./routes/user.routes');
@@ -43,6 +44,7 @@ const authRoutes = require('./routes/auth.routes');
 const orderRoutes = require('./routes/order.routes');
 const deliveryConfirmationRoutes = require('./routes/delivery_confirmation.routes');
 const deliveryInformationRoutes = require('./routes/delivery_information.routes');
+const categoryRoutes = require('./routes/category.routes');
 
 const app = express();
 
@@ -100,6 +102,7 @@ app.use((req, res, next) => {
   const authService = new AuthService({ otpService });
   const userService = new UserService({ userRepo, profileRepo, otpService, roleRepo, naturalPersonRepo, legalPersonRepo });
   const addressService = new AddressService({ addressRepo, userRepo });
+  const categoryService = new CategoryService({ categoryRepo });
   const productService = new ProductService({
     productRepo,
     userRepo,
@@ -127,6 +130,7 @@ app.use((req, res, next) => {
     tagRepo,
     userService,
     addressService,
+    categoryService,
     productService,
     cartService,
     otpService,
@@ -150,6 +154,7 @@ apiRouter.use('/auth', authRoutes);
 apiRouter.use('/orders', orderRoutes());
 apiRouter.use('/delivery-confirmations', deliveryConfirmationRoutes);
 apiRouter.use('/delivery-informations', deliveryInformationRoutes);
+apiRouter.use('/categories', categoryRoutes);
 
 app.use('/api/v1', apiRouter);
 

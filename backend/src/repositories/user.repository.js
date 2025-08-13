@@ -1,5 +1,5 @@
 const BaseRepository = require('./base.repository');
-const { User, Role, Permission } = require('../models');
+const { User, Role, Permission, UserRole } = require('../models');
 
 class UserRepository extends BaseRepository {
   constructor(sequelize) {
@@ -79,6 +79,22 @@ class UserRepository extends BaseRepository {
 
   async findActiveUsers() {
     return await this.findAll({ isActive: true });
+  }
+
+  async assignRole(userId, roleId) {
+    // Check if the role is already assigned to avoid duplicates
+    const existing = await UserRole.findOne({ where: { userId, roleId } });
+    if (existing) {
+      return existing; // Return the existing assignment
+    }
+    
+    // Create new role assignment
+    return await UserRole.create({ userId, roleId });
+  }
+
+  async removeRole(userId, roleId) {
+    const result = await UserRole.destroy({ where: { userId, roleId } });
+    return result > 0; // Return true if a role was removed, false otherwise
   }
 
   async findInactiveUsers() {
