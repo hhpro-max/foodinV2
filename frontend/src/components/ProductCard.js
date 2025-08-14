@@ -37,6 +37,11 @@ const ProductCard = ({ product }) => {
     return 'https://via.placeholder.com/300x200?text=No+Image';
   };
 
+  // Use the correct field names from backend
+  const currentPrice = product.salePrice || product.purchasePrice || 0;
+  const originalPrice = product.purchasePrice || 0;
+  const hasDiscount = originalPrice > currentPrice;
+
   return (
     <div className="product-card">
       <Link to={`/products/${product.id}`} className="product-link">
@@ -51,9 +56,9 @@ const ProductCard = ({ product }) => {
               <FaHeart className={isWishlisted ? 'wishlisted' : ''} />
             </button>
           </div>
-          {product.original_price && product.original_price > product.price && (
+          {hasDiscount && (
             <div className="discount-badge">
-              {Math.round(((product.original_price - product.price) / product.original_price) * 100)}% OFF
+              {Math.round(((originalPrice - currentPrice) / originalPrice) * 100)}% OFF
             </div>
           )}
         </div>
@@ -73,9 +78,9 @@ const ProductCard = ({ product }) => {
           </div>
 
           <div className="product-price">
-            <span className="current-price">${product.price?.toFixed(2)}</span>
-            {product.original_price && product.original_price > product.price && (
-              <span className="original-price">${product.original_price.toFixed(2)}</span>
+            <span className="current-price">${currentPrice.toFixed(2)}</span>
+            {hasDiscount && (
+              <span className="original-price">${originalPrice.toFixed(2)}</span>
             )}
           </div>
 

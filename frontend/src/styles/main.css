@@ -2387,3 +2387,48 @@ body {
     align-self: flex-start;
   }
 }
+
+/* Empty Products State */
+.empty-products {
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--gray-600);
+}
+
+.empty-products h3 {
+  margin: 0 0 1rem 0;
+  color: var(--gray-700);
+  font-size: 1.5rem;
+}
+
+.empty-products p {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: 1rem;
+}
+
+/* Product Detail Skeleton */
+.product-detail-skeleton {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.product-images-skeleton {
+  position: sticky;
+  top: 100px;
+}
+
+.product-info-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .product-detail-skeleton {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}

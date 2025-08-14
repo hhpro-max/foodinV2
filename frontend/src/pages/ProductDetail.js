@@ -26,7 +26,7 @@ const ProductDetail = () => {
       try {
         setLoading(true);
         const response = await getProduct(id);
-        setProduct(response.data.product);
+        setProduct(response.product);
       } catch (error) {
         console.error('Error fetching product:', error);
         navigate('/');
@@ -106,6 +106,11 @@ const ProductDetail = () => {
     });
   }
 
+  // Use the correct field names from backend
+  const currentPrice = product.salePrice || product.purchasePrice || 0;
+  const originalPrice = product.purchasePrice || 0;
+  const hasDiscount = originalPrice > currentPrice;
+
   return (
     <div className="product-detail-page">
       <div className="container">
@@ -147,9 +152,9 @@ const ProductDetail = () => {
             </div>
 
             <div className="product-price">
-              <span className="current-price">${product.price?.toFixed(2)}</span>
-              {product.original_price && product.original_price > product.price && (
-                <span className="original-price">${product.original_price.toFixed(2)}</span>
+              <span className="current-price">${currentPrice.toFixed(2)}</span>
+              {hasDiscount && (
+                <span className="original-price">${originalPrice.toFixed(2)}</span>
               )}
             </div>
 

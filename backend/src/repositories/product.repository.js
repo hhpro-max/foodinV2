@@ -71,8 +71,9 @@ class ProductRepository extends BaseRepository {
     });
   }
 
-  async searchProducts(searchTerm, categoryId = null, sellerId = null, limit = 20, offset = 0) {
+  async searchProducts(searchTerm, filters = {}, limit = 20, offset = 0) {
     const { Op } = this.sequelize.Sequelize;
+    const { categoryId, sellerId } = filters;
     const where = {
       status: 'approved',
       is_active: true,
@@ -99,11 +100,7 @@ class ProductRepository extends BaseRepository {
         { model: Category, as: 'category' },
         { model: ProductImage, as: 'images', order: [['displayOrder', 'ASC']] },
         { model: Tag, as: 'tags' },
-        {
-          model: User,
-          as: 'seller',
-          include: [{ model: Profile, as: 'profile' }],
-        },
+      
       ],
       order: [['createdAt', 'DESC']],
       limit,

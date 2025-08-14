@@ -28,12 +28,15 @@ export const CartProvider = ({ children }) => {
   }, [isAuthenticated]);
 
   const loadCart = async () => {
-    if (!isAuthenticated) return;
-    
+    if (!isAuthenticated) {
+      setCart(null);
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await getCart();
-      setCart(response.data.cart);
+      setCart(response.data);
     } catch (error) {
       console.error('Failed to load cart:', error);
       toast.error('Failed to load cart');
@@ -50,7 +53,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       const response = await addToCart(productId, quantity);
-      setCart(response.data.cart);
+      setCart(response.data);
       toast.success('Item added to cart!');
       return { success: true };
     } catch (error) {
@@ -65,7 +68,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       const response = await updateCartItem(productId, quantity);
-      setCart(response.data.cart);
+      setCart(response.data);
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to update cart';

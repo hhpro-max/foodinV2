@@ -55,7 +55,7 @@ const productFiltersSchema = Joi.object({
   status: Joi.string().valid('pending', 'approved', 'rejected').optional(),
   category_id: Joi.string().uuid().optional(),
   seller_id: Joi.string().uuid().optional(),
-  search: Joi.string().min(2).max(100).optional(),
+  search: Joi.string().min(2).max(100).optional().allow(''),
 });
 
 const productIdSchema = Joi.object({
