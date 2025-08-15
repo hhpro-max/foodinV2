@@ -15,8 +15,9 @@ const ProductCard = ({ product }) => {
     e.stopPropagation();
     
     if (!isAuthenticated) {
-      // You could show a toast or redirect to login
-      return;
+  // Redirect to auth page if not authenticated
+  window.location.href = '/auth';
+  return;
     }
 
     setAddingToCart(true);

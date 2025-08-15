@@ -1,0 +1,43 @@
+.profile-complete-container {
+  max-width: 820px;
+  margin: 36px auto;
+  background: var(--card-bg, #fff);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  padding: 28px;
+}
+
+.profile-complete-container h2{
+  margin: 0 0 12px 0;
+  color: var(--text-900, #12263a);
+}
+
+.profile-banner {
+  background: linear-gradient(90deg, rgba(255,215,0,0.12), rgba(25,118,210,0.06));
+  border: 1px solid rgba(255,215,0,0.2);
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.profile-banner strong { color: var(--text-900); }
+.field-error { color: var(--danger, #c62828); font-size: 0.85rem; margin-top:6px; }
+
+.profile-complete-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.profile-complete-form .form-group { display:flex; flex-direction:column; }
+.profile-complete-form .form-group label { font-size: 0.85rem; margin-bottom:6px; color:var(--text-700);} 
+.profile-complete-form input, .profile-complete-form select { padding:10px 12px; border-radius:8px; border:1px solid var(--gray-200); }
+
+.profile-complete-form .full { grid-column: 1 / -1; }
+.profile-complete-form .actions { grid-column: 1 / -1; display:flex; justify-content:flex-end; }
+
+.btn-primary { background: var(--primary, #FFD700); border:none; padding:10px 16px; border-radius:8px; cursor:pointer; }
+.btn-primary:disabled { opacity:0.6; cursor:not-allowed; }
+
+@media (max-width: 700px){
+  .profile-complete-form { grid-template-columns: 1fr; }
+}

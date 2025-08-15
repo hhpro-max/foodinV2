@@ -25,6 +25,17 @@ const Navbar = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
   };
 
+  const handleCartClick = () => {
+    // Keep SPA navigation and close mobile menu when clicked
+    if (!isAuthenticated) {
+      navigate('/auth');
+      setIsMenuOpen(false);
+      return;
+    }
+    navigate('/cart');
+    setIsMenuOpen(false);
+  };
+
   return (
     <nav className="navbar">
       <div className="container">
@@ -51,15 +62,17 @@ const Navbar = () => {
             </Link>
           </li>
           
+          {/* Cart is visible for all users; unauthenticated users are redirected to /auth */}
+          <li className="nav-item">
+            <button className="nav-link cart-link" onClick={handleCartClick}>
+              <FaShoppingCart />
+              <span className="cart-count">{getCartItemCount()}</span>
+              <span className="cart-text">Cart</span>
+            </button>
+          </li>
+
           {isAuthenticated ? (
             <>
-              <li className="nav-item">
-                <Link to="/cart" className="nav-link cart-link" onClick={() => setIsMenuOpen(false)}>
-                  <FaShoppingCart />
-                  <span className="cart-count">{getCartItemCount()}</span>
-                  <span className="cart-text">Cart</span>
-                </Link>
-              </li>
               <li className="nav-item">
                 <Link to="/orders" className="nav-link" onClick={() => setIsMenuOpen(false)}>
                   Orders

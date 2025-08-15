@@ -1,6 +1,7 @@
 import React from 'react';
 
-const CategoryFilter = ({ categories, selectedCategory, onSelectCategory }) => {
+const CategoryFilter = ({ categories = [], selectedCategory, onSelectCategory }) => {
+  // console.log('CategoryFilter received categories:', categories);
   return (
     <div className="category-filter">
       <h4>Categories</h4>

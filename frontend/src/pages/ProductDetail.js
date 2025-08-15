@@ -26,10 +26,25 @@ const ProductDetail = () => {
       try {
         setLoading(true);
         const response = await getProduct(id);
-        setProduct(response.product);
+
+        // Debug log: show raw response received by the page
+        // (helps diagnose mismatched shapes or unexpected errors)
+        console.debug('[ProductDetail] getProduct response:', response);
+
+        // Normalize different backend response shapes
+        // backend may return: { status, data: { product } } or { product } or product object directly
+        let productData = null;
+        if (response?.data?.product) productData = response.data.product;
+        else if (response?.product) productData = response.product;
+        else productData = response;
+
+        console.debug('[ProductDetail] normalized productData:', productData);
+
+        setProduct(productData);
       } catch (error) {
         console.error('Error fetching product:', error);
-        navigate('/');
+        // Do not force-redirect to home; show an informative error state instead
+        setProduct(null);
       } finally {
         setLoading(false);
       }
@@ -40,7 +55,7 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      navigate('/login', { state: { from: `/products/${id}` } });
+  navigate('/auth', { state: { from: `/products/${id}` } });
       return;
     }
 

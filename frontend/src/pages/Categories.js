@@ -8,15 +8,39 @@ import 'react-loading-skeleton/dist/skeleton.css';
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        const response = await getCategories();
-        setCategories(response.categories || []);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
+        setError(null);
+  const response = await getCategories();
+  console.log('Categories API response:', response);
+
+  // Backend may return different shapes. Support common variants:
+        // - Array
+        // - { categories: [...] }
+        // - { status: 'success', data: { categories: [...] } }
+        let list = [];
+        if (Array.isArray(response)) {
+          list = response;
+        } else if (Array.isArray(response.categories)) {
+          list = response.categories;
+        } else if (response.data && Array.isArray(response.data.categories)) {
+          list = response.data.categories;
+        } else if (response.data && Array.isArray(response.data)) {
+          list = response.data;
+        } else {
+          // fallback: try to find any array value in response
+          const arr = Object.values(response).find((v) => Array.isArray(v));
+          if (Array.isArray(arr)) list = arr;
+        }
+
+        setCategories(list);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+        setError(err?.response?.data?.message || err.message || 'Failed to fetch categories');
       } finally {
         setLoading(false);
       }
@@ -57,7 +81,12 @@ const Categories = () => {
           <p>Browse products by category</p>
         </div>
 
-        {categories.length === 0 ? (
+        {error ? (
+          <div className="empty-categories">
+            <h3>Error loading categories</h3>
+            <p>{error}</p>
+          </div>
+        ) : categories.length === 0 ? (
           <div className="empty-categories">
             <FaShoppingBag />
             <h3>No categories found</h3>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { debounce } from '../utils/debounce';
 import SearchBar from '../components/SearchBar';
 import CategoryFilter from '../components/CategoryFilter';
@@ -76,44 +76,52 @@ const Home = () => {
     }
   }, [searchQuery, selectedCategory, selectedTags, pagination.limit]);
 
-  // Fetch initial data
+  // Fetch categories once on mount
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCategoriesOnly = async () => {
       try {
-        setLoading(true);
-        console.log('Fetching initial data...');
-        
-        // Fetch categories
+        console.log('Fetching categories...');
         const categoriesResponse = await getCategories();
         console.log('Categories response:', categoriesResponse);
-        setCategories(categoriesResponse.categories || []);
 
-        // Fetch products
-        await fetchProducts();
+        let catList = [];
+        if (Array.isArray(categoriesResponse)) {
+          catList = categoriesResponse;
+        } else if (Array.isArray(categoriesResponse.categories)) {
+          catList = categoriesResponse.categories;
+        } else if (categoriesResponse.data && Array.isArray(categoriesResponse.data.categories)) {
+          catList = categoriesResponse.data.categories;
+        } else {
+          const arr = Object.values(categoriesResponse).find((v) => Array.isArray(v));
+          if (Array.isArray(arr)) catList = arr;
+        }
+
+        setCategories(catList);
       } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching categories:', error);
       }
     };
 
-    fetchData();
-  }, []); // Empty dependency array - only run once on mount
+    fetchCategoriesOnly();
+  }, []);
 
-  // Fetch products when filters change
+  // Fetch products on mount and whenever fetchProducts changes (filters/search update it)
+  const isInitialLoad = useRef(true);
   useEffect(() => {
-    if (!loading) { // Only fetch if initial load is complete
-      fetchProducts(1);
-    }
-  }, [fetchProducts, loading]);
+    if (isInitialLoad.current) setLoading(true);
+    fetchProducts(1).finally(() => {
+      if (isInitialLoad.current) {
+        setLoading(false);
+        isInitialLoad.current = false;
+      }
+    });
+  }, [fetchProducts]);
 
   // Handle search with debouncing
-  const handleSearch = useCallback(
-    debounce((query) => {
-      setSearchQuery(query);
-    }, 500),
-    []
-  );
+  const debouncedSetSearch = useMemo(() => debounce((query) => setSearchQuery(query), 500), [setSearchQuery]);
+  const handleSearch = useCallback((query) => {
+    debouncedSetSearch(query);
+  }, [debouncedSetSearch]);
 
   // Handle category selection
   const handleCategorySelect = useCallback((categoryId) => {

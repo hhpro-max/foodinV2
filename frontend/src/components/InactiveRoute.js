@@ -2,8 +2,8 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-const PrivateRoute = ({ children }) => {
-  const { isAuthenticated, loading, user } = useAuth();
+const InactiveRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -19,12 +19,7 @@ const PrivateRoute = ({ children }) => {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // If user exists but is not active, redirect to profile completion
-  if (user && user.isActive === false) {
-    return <Navigate to="/profile/complete" state={{ from: location }} replace />;
-  }
-
   return children;
 };
 
-export default PrivateRoute; 
+export default InactiveRoute;

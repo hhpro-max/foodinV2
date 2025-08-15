@@ -29,11 +29,7 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
+    // Let callers handle 401/unauthorized cases (e.g. inactive users)
     return Promise.reject(error);
   }
 );
@@ -46,7 +42,11 @@ export const getProducts = async (params = {}) => {
 
 export const getProduct = async (id) => {
   const response = await api.get(`/products/${id}`);
-  return response.data;
+  // Normalize response shapes so callers receive the actual product object.
+  // Backend may return: { status, data: { product } } or { product } or the product directly.
+  const data = response.data;
+  const product = data?.data?.product ?? data?.product ?? data;
+  return product;
 };
 
 // Category APIs
@@ -79,6 +79,11 @@ export const getUserProfile = async () => {
 
 export const updateUserProfile = async (userData) => {
   const response = await api.put('/users/profile', userData);
+  return response.data;
+};
+
+export const completeProfile = async (profileData) => {
+  const response = await api.post('/users/profile/complete', profileData);
   return response.data;
 };
 

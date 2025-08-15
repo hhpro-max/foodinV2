@@ -15,6 +15,8 @@ import Orders from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
 import Profile from './pages/Profile';
 import Addresses from './pages/Addresses';
+import ProfileComplete from './pages/ProfileComplete';
+import InactiveRoute from './components/InactiveRoute';
 import Categories from './pages/Categories';
 import './App.css';
 
@@ -87,6 +89,11 @@ function App() {
                   <PrivateRoute>
                     <Addresses />
                   </PrivateRoute>
+                } />
+                <Route path="/profile/complete" element={
+                  <InactiveRoute>
+                    <ProfileComplete />
+                  </InactiveRoute>
                 } />
               </Routes>
             </main>

@@ -11,12 +11,7 @@ class ProductRepository extends BaseRepository {
       include: [
         { model: Category, as: 'category' },
         { model: ProductImage, as: 'images', order: [['displayOrder', 'ASC']] },
-        { model: Tag, as: 'tags' },
-        {
-          model: User,
-          as: 'seller',
-          include: [{ model: Profile, as: 'profile' }],
-        },
+        { model: Tag, as: 'tags' }
       ],
     });
   }

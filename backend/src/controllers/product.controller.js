@@ -123,7 +123,7 @@ const getProductById = catchAsync(async (req, res) => {
 
   // Only show approved products to non-admins/sellers (unless it's their own product)
   const isOwner = req.user && product.seller_id === req.user.id;
-  const isAdmin = req.user && req.user.roles.includes('admin');
+  const isAdmin = req.user && req.user.roles && req.user.roles.includes('admin');
 
   if (product.status !== 'approved' && !isOwner && !isAdmin) {
     throw ApiError.notFound('Product not found');

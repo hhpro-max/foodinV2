@@ -16,7 +16,7 @@ const Cart = () => {
         <div className="empty-cart">
           <FaShoppingBag />
           <h2>Please login to view your cart</h2>
-          <button className="btn btn-primary" onClick={() => navigate('/login')}>
+          <button className="btn btn-primary" onClick={() => navigate('/auth')}>
             Login
           </button>
         </div>
@@ -97,74 +97,77 @@ const Cart = () => {
 
         <div className="cart-content">
           <div className="cart-items">
-            {cart.items.map((item) => (
-              <div key={item.id} className="cart-item">
-                <div className="item-image">
-                  {item.product?.images?.[0] ? (
-                    <img 
-                      src={`http://localhost:3000/${item.product.images[0].image_url}`} 
-                      alt={item.product.name}
-                    />
-                  ) : (
-                    <div className="image-placeholder">
-                      <FaShoppingBag />
+            {cart.items.map((item) => {
+              const price = item.unit_price ?? item.price ?? item.unitPrice ?? 0;
+              const productName = item.product?.name || item.name || 'Product Name';
+              const productCategory = item.product?.category?.name || item.category?.name || item.category || 'Category';
+              const tags = item.product?.tags || item.tags || [];
+              const imagePath = item.product?.images?.[0]?.image_url || item.image_url || item.images?.[0]?.image_url || null;
+
+              return (
+                <div key={item.id} className="cart-item">
+                  <div className="item-image">
+                    {imagePath ? (
+                      <img src={`http://localhost:3000/${imagePath}`} alt={productName} />
+                    ) : (
+                      <div className="image-placeholder">
+                        <FaShoppingBag />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="item-details">
+                    <h3>{productName}</h3>
+                    <p className="item-category">{productCategory}</p>
+                    <div className="item-tags">
+                      {tags.map(tag => (
+                        <span key={tag.id || tag.name} className="tag" style={{ backgroundColor: tag.color }}>
+                          {tag.name || tag}
+                        </span>
+                      ))}
                     </div>
-                  )}
-                </div>
-
-                <div className="item-details">
-                  <h3>{item.product?.name || 'Product Name'}</h3>
-                  <p className="item-category">{item.product?.category?.name || 'Category'}</p>
-                  <div className="item-tags">
-                    {item.product?.tags?.map(tag => (
-                      <span key={tag.id} className="tag" style={{ backgroundColor: tag.color }}>
-                        {tag.name}
-                      </span>
-                    ))}
                   </div>
-                </div>
 
-                <div className="item-price">
-                  <span className="price">${item.unit_price?.toFixed(2) || '0.00'}</span>
-                </div>
+                  <div className="item-price">
+                    <span className="price">${Number(price).toFixed(2)}</span>
+                  </div>
 
-                <div className="item-quantity">
-                  <div className="quantity-controls">
+                  <div className="item-quantity">
+                    <div className="quantity-controls">
+                      <button
+                        className="quantity-btn"
+                        onClick={() => handleQuantityChange(item.product_id, item.quantity - 1)}
+                        disabled={updatingItems.has(item.product_id)}
+                      >
+                        <FaMinus />
+                      </button>
+                      <span className="quantity">{item.quantity}</span>
+                      <button
+                        className="quantity-btn"
+                        onClick={() => handleQuantityChange(item.product_id, item.quantity + 1)}
+                        disabled={updatingItems.has(item.product_id)}
+                      >
+                        <FaPlus />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="item-total">
+                    <span className="total-price">${(Number(price) * item.quantity).toFixed(2)}</span>
+                  </div>
+
+                  <div className="item-actions">
                     <button
-                      className="quantity-btn"
-                      onClick={() => handleQuantityChange(item.product_id, item.quantity - 1)}
+                      className="remove-btn"
+                      onClick={() => handleRemoveItem(item.product_id)}
                       disabled={updatingItems.has(item.product_id)}
                     >
-                      <FaMinus />
-                    </button>
-                    <span className="quantity">{item.quantity}</span>
-                    <button
-                      className="quantity-btn"
-                      onClick={() => handleQuantityChange(item.product_id, item.quantity + 1)}
-                      disabled={updatingItems.has(item.product_id)}
-                    >
-                      <FaPlus />
+                      <FaTrash />
                     </button>
                   </div>
                 </div>
-
-                <div className="item-total">
-                  <span className="total-price">
-                    ${((item.unit_price || 0) * item.quantity).toFixed(2)}
-                  </span>
-                </div>
-
-                <div className="item-actions">
-                  <button
-                    className="remove-btn"
-                    onClick={() => handleRemoveItem(item.product_id)}
-                    disabled={updatingItems.has(item.product_id)}
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="cart-summary">
