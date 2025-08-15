@@ -87,8 +87,8 @@ const Navbar = () => {
             </>
           ) : (
             <li className="nav-item">
-              <Link to="/login" className="nav-link login-btn" onClick={() => setIsMenuOpen(false)}>
-                Login
+              <Link to="/auth" className="nav-link login-btn" onClick={() => setIsMenuOpen(false)}>
+                Login/Register
               </Link>
             </li>
           )}

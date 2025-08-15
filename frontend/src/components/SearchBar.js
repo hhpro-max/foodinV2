@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { debounce } from '../utils/debounce';
+import React, { useState } from 'react';
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState('');
-  
-  const debouncedSearch = debounce((value) => {
-    onSearch(value);
-  }, 300);
 
-  useEffect(() => {
-    debouncedSearch(query);
-  }, [query, debouncedSearch]);
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    onSearch(value);
+  };
 
   return (
     <div className="search-bar">
@@ -18,7 +15,7 @@ const SearchBar = ({ onSearch }) => {
         type="text"
         placeholder="Search products..."
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={handleChange}
         className="form-control"
       />
     </div>

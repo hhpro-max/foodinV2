@@ -7,8 +7,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Auth from './pages/Auth';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
@@ -53,8 +52,7 @@ function App() {
             <main className="main-content">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                <Route path="/auth" element={<Auth />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/categories/:id" element={<Home />} />
