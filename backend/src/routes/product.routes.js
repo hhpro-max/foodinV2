@@ -430,10 +430,12 @@ router.get('/seller/my-products',
  *                 type: number
  *                 format: float
  *               stock_quantity:
- *                 type: integer
+ *                 type: number
+ *                 format: double
  *                 minimum: 0
  *               min_order_quantity:
- *                 type: integer
+ *                 type: number
+ *                 format: double
  *                 minimum: 1
  *               unit:
  *                 type: string
@@ -569,7 +571,8 @@ router.delete('/:productId',
  *               - quantity
  *             properties:
  *               quantity:
- *                 type: integer
+ *                 type: number
+ *                 format: double
  *                 minimum: 1
  *                 description: Quantity to add or subtract
  *               operation:
@@ -883,7 +886,8 @@ router.get('/admin/top-selling',
  *       - in: query
  *         name: threshold
  *         schema:
- *           type: integer
+ *           type: number
+ *           format: double
  *           minimum: 1
  *           maximum: 1000
  *         description: Stock threshold

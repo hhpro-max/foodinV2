@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { completeProfile, getUserProfile } from '../services/api';
+import { completeProfile, getUserProfile, chooseRole } from '../services/api';
 import toast from 'react-hot-toast';
 import '../styles/profile-complete.css';
 
@@ -10,6 +10,7 @@ const ProfileComplete = () => {
   const { token, user } = useAuth();
   const [form, setForm] = useState({
     user_type: 'natural',
+  role: 'buyer',
     first_name: '',
     last_name: '',
     email: '',
@@ -42,6 +43,7 @@ const ProfileComplete = () => {
   };
 
   const validate = () => {
+  if (!form.role) return 'Please select a role';
     if (!form.first_name || !form.last_name) return 'First and last name are required';
     if (form.user_type === 'natural') {
       if (!form.national_id) return 'National ID is required';
@@ -71,6 +73,16 @@ const ProfileComplete = () => {
       // If backend returns updated user, update AuthContext
       const updatedUser = resp?.data?.user || resp?.user || null;
       if (updatedUser) updateUser(updatedUser);
+
+      // Call chooseRole to assign buyer/seller role
+      try {
+        await chooseRole(form.role);
+        toast.success('Role selected');
+      } catch (roleErr) {
+        // Non-fatal: show message but continue
+        console.error('Failed to choose role:', roleErr);
+        toast.error(roleErr.response?.data?.message || 'Failed to select role');
+      }
 
       navigate('/');
     } catch (err) {
@@ -103,6 +115,32 @@ const ProfileComplete = () => {
     <div className="profile-complete-container">
       <h2>Complete your profile</h2>
       <form className="profile-complete-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Role</label>
+          <div className="role-options">
+            <label className="role-option">
+              <input
+                type="radio"
+                name="role"
+                value="buyer"
+                checked={form.role === 'buyer'}
+                onChange={handleChange}
+              />
+              Buyer
+            </label>
+            <label className="role-option">
+              <input
+                type="radio"
+                name="role"
+                value="seller"
+                checked={form.role === 'seller'}
+                onChange={handleChange}
+              />
+              Seller
+            </label>
+          </div>
+          {fieldErrors.role && <p className="field-error">{fieldErrors.role}</p>}
+        </div>
         <div className="form-group">
           <label>User Type</label>
           <select name="user_type" value={form.user_type} onChange={handleChange}>

@@ -35,8 +35,8 @@ class ProductService {
       description: productData.description,
       categoryId: productData.category_id,
       purchasePrice: productData.purchase_price,
-      stock_quantity: productData.stock_quantity || 0,
-      min_order_quantity: productData.min_order_quantity || 1,
+      stockQuantity: productData.stock_quantity || 0,
+      minOrderQuantity: productData.min_order_quantity || 1,
       unit: productData.unit || 'piece',
       weight: productData.weight,
       dimensions: productData.dimensions && productData.dimensions !== '' ? JSON.stringify(productData.dimensions) : null,
@@ -98,8 +98,8 @@ class ProductService {
       description: productData.description,
       categoryId: productData.category_id,
       purchasePrice: productData.purchase_price,
-      stock_quantity: productData.stock_quantity,
-      min_order_quantity: productData.min_order_quantity,
+      stockQuantity: productData.stock_quantity,
+      minOrderQuantity: productData.min_order_quantity,
       unit: productData.unit,
       weight: productData.weight,
       dimensions: productData.dimensions && productData.dimensions !== '' ? JSON.stringify(productData.dimensions) : null,
@@ -349,7 +349,7 @@ class ProductService {
     const stockChange = operation === 'subtract' ? -Math.abs(quantity) : Math.abs(quantity);
     const updatedProduct = await this.productRepo.updateStock(productId, stockChange);
 
-    if (updatedProduct.stock_quantity < 0) {
+    if (updatedProduct.stockQuantity < 0) {
       throw ApiError.badRequest('Insufficient stock');
     }
 

@@ -18,6 +18,19 @@ import Addresses from './pages/Addresses';
 import ProfileComplete from './pages/ProfileComplete';
 import InactiveRoute from './components/InactiveRoute';
 import Categories from './pages/Categories';
+import Panel from './pages/Panel';
+import UsersPanel from './pages/panel/Users';
+import ProductsPanel from './pages/panel/Products';
+import CreateProduct from './pages/panel/CreateProduct';
+import ProductView from './pages/panel/ProductView';
+import ProductEdit from './pages/panel/ProductEdit';
+import InvoicesPanel from './pages/panel/Invoices';
+import PaymentsPanel from './pages/panel/Payments';
+import CategoriesPanel from './pages/panel/CategoriesPanel';
+import NotificationsPanel from './pages/panel/NotificationsPanel';
+import ReportsPanel from './pages/panel/Reports';
+import SettingsPanel from './pages/panel/Settings';
+import LogsPanel from './pages/panel/Logs';
 import './App.css';
 
 function App() {
@@ -95,6 +108,24 @@ function App() {
                     <ProfileComplete />
                   </InactiveRoute>
                 } />
+                <Route path="/panel/*" element={
+                  <PrivateRoute>
+                    <Panel />
+                  </PrivateRoute>
+                }>
+                  <Route path="users" element={<UsersPanel />} />
+                  <Route path="products" element={<ProductsPanel />} />
+                  <Route path="products/view/:id" element={<ProductView />} />
+                  <Route path="products/edit/:id" element={<ProductEdit />} />
+                  <Route path="products/create" element={<CreateProduct />} />
+                  <Route path="invoices" element={<InvoicesPanel />} />
+                  <Route path="payments" element={<PaymentsPanel />} />
+                  <Route path="categories" element={<CategoriesPanel />} />
+                  <Route path="notifications" element={<NotificationsPanel />} />
+                  <Route path="reports/*" element={<ReportsPanel />} />
+                  <Route path="settings" element={<SettingsPanel />} />
+                  <Route path="logs" element={<LogsPanel />} />
+                </Route>
               </Routes>
             </main>
             <Footer />

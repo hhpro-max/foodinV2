@@ -54,6 +54,23 @@ const Product = sequelize.define('Product', {
     defaultValue: true,
     field: 'is_active',
   },
+  stockQuantity: {
+    type: DataTypes.DOUBLE,
+    allowNull: false,
+    defaultValue: 0,
+    field: 'stock_quantity',
+  },
+  minOrderQuantity: {
+    type: DataTypes.DOUBLE,
+    allowNull: false,
+    defaultValue: 1,
+    field: 'min_order_quantity',
+  },
+  unit: {
+    type: DataTypes.ENUM('piece', 'kg', 'g', 'lb', 'oz', 'liter', 'ml', 'm', 'cm', 'mm'),
+    allowNull: false,
+    defaultValue: 'piece',
+  },
 }, {
   timestamps: true,
   tableName: 'products',

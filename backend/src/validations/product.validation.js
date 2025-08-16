@@ -6,8 +6,8 @@ const createProductSchema = Joi.object({
   description: Joi.string().max(2000).optional(),
   category_id: Joi.string().uuid().optional(),
   purchase_price: Joi.number().positive().precision(2).required(),
-  stock_quantity: Joi.number().integer().min(0).default(0),
-  min_order_quantity: Joi.number().integer().min(1).default(1),
+  stock_quantity: Joi.number().min(0).default(0),
+  min_order_quantity: Joi.number().min(1).default(1),
   unit: Joi.string().max(50).default('piece'),
   weight: Joi.number().positive().precision(3).optional(),
   dimensions: Joi.object({
@@ -23,8 +23,8 @@ const updateProductSchema = Joi.object({
   description: Joi.string().max(2000).optional(),
   category_id: Joi.string().uuid().optional(),
   purchase_price: Joi.number().positive().precision(2).optional(),
-  stock_quantity: Joi.number().integer().min(0).optional(),
-  min_order_quantity: Joi.number().integer().min(1).optional(),
+  stock_quantity: Joi.number().min(0).optional(),
+  min_order_quantity: Joi.number().min(1).optional(),
   unit: Joi.string().max(50).optional(),
   weight: Joi.number().positive().precision(3).optional(),
   dimensions: Joi.object({
@@ -45,7 +45,7 @@ const rejectProductSchema = Joi.object({
 });
 
 const updateStockSchema = Joi.object({
-  quantity: Joi.number().integer().positive().required(),
+  quantity: Joi.number().positive().required(),
   operation: Joi.string().valid('add', 'subtract').default('add'),
 });
 
@@ -64,7 +64,7 @@ const productIdSchema = Joi.object({
 
 const statsQuerySchema = Joi.object({
   limit: Joi.number().integer().min(1).max(100).default(10),
-  threshold: Joi.number().integer().min(1).max(1000).default(10),
+  threshold: Joi.number().min(1).max(1000).default(10),
 });
 
 module.exports = {

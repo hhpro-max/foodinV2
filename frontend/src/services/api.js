@@ -40,6 +40,14 @@ export const getProducts = async (params = {}) => {
   return response.data;
 };
 
+export const createProduct = async (formData) => {
+  // formData must be a FormData instance with fields matching backend expectations
+  const response = await api.post('/products', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
+
 export const getProduct = async (id) => {
   const response = await api.get(`/products/${id}`);
   // Normalize response shapes so callers receive the actual product object.
@@ -47,6 +55,34 @@ export const getProduct = async (id) => {
   const data = response.data;
   const product = data?.data?.product ?? data?.product ?? data;
   return product;
+};
+
+// Admin product APIs
+export const getPendingProducts = async (params = {}) => {
+  const response = await api.get('/products/admin/pending', { params });
+  return response.data;
+};
+
+export const getAllProductsAdmin = async (params = {}) => {
+  const response = await api.get('/products/admin/all', { params });
+  return response.data;
+};
+
+// Seller product APIs (returns products for the authenticated seller)
+export const getSellerProducts = async (params = {}) => {
+  const response = await api.get('/products/seller/my-products', { params });
+  // normalize response shapes
+  return response.data;
+};
+
+export const approveProduct = async (productId, approvalData) => {
+  const response = await api.patch(`/products/${productId}/approve`, approvalData);
+  return response.data;
+};
+
+export const rejectProduct = async (productId, rejectionData) => {
+  const response = await api.patch(`/products/${productId}/reject`, rejectionData);
+  return response.data;
 };
 
 // Category APIs
@@ -77,6 +113,11 @@ export const getUserProfile = async () => {
   return response.data;
 };
 
+export const getUserPermissions = async () => {
+  const response = await api.get('/users/permissions');
+  return response.data;
+};
+
 export const updateUserProfile = async (userData) => {
   const response = await api.put('/users/profile', userData);
   return response.data;
@@ -84,6 +125,12 @@ export const updateUserProfile = async (userData) => {
 
 export const completeProfile = async (profileData) => {
   const response = await api.post('/users/profile/complete', profileData);
+  return response.data;
+};
+
+// Role selection API
+export const chooseRole = async (role) => {
+  const response = await api.post('/users/choose-role', { role });
   return response.data;
 };
 
@@ -156,7 +203,7 @@ export const deleteAddress = async (id) => {
 };
 
 export const setDefaultAddress = async (id) => {
-  const response = await api.put(`/addresses/${id}/default`);
+  const response = await api.patch(`/addresses/${id}/set-primary`);
   return response.data;
 };
 
@@ -168,6 +215,11 @@ export const getInvoices = async (params = {}) => {
 
 export const getInvoice = async (id) => {
   const response = await api.get(`/invoices/${id}`);
+  return response.data;
+};
+
+export const markInvoiceAsPaid = async (id) => {
+  const response = await api.patch(`/invoices/${id}/pay`);
   return response.data;
 };
 
@@ -184,6 +236,11 @@ export const markNotificationAsRead = async (id) => {
 
 export const markAllNotificationsAsRead = async () => {
   const response = await api.put('/notifications/read-all');
+  return response.data;
+};
+
+export const sendNotification = async (payload) => {
+  const response = await api.post('/notifications/send', payload);
   return response.data;
 };
 

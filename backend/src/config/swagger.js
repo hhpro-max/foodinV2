@@ -267,6 +267,18 @@ const options = {
               type: 'number',
               format: 'float',
             },
+            stockQuantity: {
+              type: 'number',
+              format: 'double',
+            },
+            minOrderQuantity: {
+              type: 'number',
+              format: 'double',
+            },
+            unit: {
+              type: 'string',
+              enum: ['piece', 'kg', 'g', 'lb', 'oz', 'liter', 'ml', 'm', 'cm', 'mm'],
+            },
           },
         },
         Category: {

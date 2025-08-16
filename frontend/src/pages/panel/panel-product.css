@@ -1,0 +1,16 @@
+.panel-product-create { background: #fff; border-radius: 12px; padding: 18px; box-shadow: 0 6px 18px rgba(20,40,80,0.06); }
+
+.product-form .form-row { margin-bottom: 14px; }
+.product-form label { display:block; font-weight:600; margin-bottom:6px; }
+.product-form input[type="text"], .product-form input[type="number"], .product-form textarea, .product-form select { width:100%; padding:8px 10px; border:1px solid #e3e8ef; border-radius:8px; }
+.product-form textarea { min-height:80px; resize:vertical; }
+.product-form .inline { display:flex; gap:12px; }
+.product-form .inline > div { flex:1; }
+.product-form .previews { display:flex; gap:8px; margin-top:8px; }
+.product-form .previews img { width:84px; height:84px; object-fit:cover; border-radius:8px; border:1px solid #eee; }
+.product-form .actions { margin-top:18px; }
+.btn-primary { background: linear-gradient(90deg,#6b8cff,#3aa0ff); color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
+.muted { color:#6b7280; font-size:13px; }
+.error { color:#b91c1c; font-size:13px; margin-top:6px; }
+
+@media (max-width:900px) { .product-form .inline { flex-direction:column; } }

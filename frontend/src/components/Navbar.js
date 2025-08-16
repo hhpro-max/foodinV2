@@ -74,8 +74,8 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <li className="nav-item">
-                <Link to="/orders" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-                  Orders
+                <Link to="/panel" className="nav-link panel-link" onClick={() => setIsMenuOpen(false)}>
+                  Panel
                 </Link>
               </li>
               <li className="nav-item user-menu-container">
