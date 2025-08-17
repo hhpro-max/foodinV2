@@ -26,8 +26,8 @@ class BaseRepository {
     return await this.model.findOne({ where: conditions });
   }
 
-  async create(data) {
-    return await this.model.create(data);
+  async create(data, options = {}) {
+    return await this.model.create(data, options);
   }
 
   async update(id, data, options = {}) {

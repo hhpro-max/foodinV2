@@ -74,8 +74,8 @@ class CartRepository extends BaseRepository {
     return await CartItem.destroy({ where: { cartId, productId } });
   }
 
-  async clearCart(cartId) {
-    return await CartItem.destroy({ where: { cartId } });
+  async clearCart(cartId, options = {}) {
+    return await CartItem.destroy({ where: { cartId }, ...options });
   }
 
   async getCartSummary(cartId) {

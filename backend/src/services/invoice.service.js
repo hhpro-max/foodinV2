@@ -7,7 +7,7 @@ class InvoiceService {
     this.invoiceItemRepository = new InvoiceItemRepository(sequelize);
   }
 
-  async createInvoice(buyerId, sellerId, orderId, items) {
+  async createInvoice(buyerId, sellerId, orderId, items, transaction = null) {
     const totalAmount = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
 
     const invoice = await this.invoiceRepository.create({
@@ -16,7 +16,7 @@ class InvoiceService {
       orderId,
       totalAmount,
       status: 'pending',
-    });
+    }, { transaction });
 
     for (const item of items) {
       await this.invoiceItemRepository.create({
@@ -25,7 +25,7 @@ class InvoiceService {
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         totalPrice: item.quantity * item.unitPrice,
-      });
+      }, { transaction });
     }
 
     return invoice;

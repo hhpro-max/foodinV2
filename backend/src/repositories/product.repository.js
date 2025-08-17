@@ -103,11 +103,11 @@ class ProductRepository extends BaseRepository {
     });
   }
 
-  async updateStock(productId, quantity) {
-    const product = await Product.findByPk(productId);
+  async updateStock(productId, quantity, transaction = null) {
+    const product = await Product.findByPk(productId, { transaction });
     if (product) {
       product.stockQuantity += quantity;
-      await product.save();
+      await product.save({ transaction });
     }
     return product;
   }
