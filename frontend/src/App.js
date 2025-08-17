@@ -19,14 +19,15 @@ import ProfileComplete from './pages/ProfileComplete';
 import InactiveRoute from './components/InactiveRoute';
 import Categories from './pages/Categories';
 import Panel from './pages/Panel';
-import UsersPanel from './pages/panel/Users';
-import ProductsPanel from './pages/panel/Products';
+import UserManagement from './pages/panel/UserManagement';
+import ProductManagement from './pages/panel/ProductManagement';
+import CategoryManagement from './pages/panel/CategoryManagement';
+import InvoiceManagement from './pages/panel/InvoiceManagement';
+import MyProducts from './pages/panel/MyProducts';
 import CreateProduct from './pages/panel/CreateProduct';
 import ProductView from './pages/panel/ProductView';
 import ProductEdit from './pages/panel/ProductEdit';
-import InvoicesPanel from './pages/panel/Invoices';
 import PaymentsPanel from './pages/panel/Payments';
-import CategoriesPanel from './pages/panel/CategoriesPanel';
 import NotificationsPanel from './pages/panel/NotificationsPanel';
 import ReportsPanel from './pages/panel/Reports';
 import SettingsPanel from './pages/panel/Settings';
@@ -113,14 +114,16 @@ function App() {
                     <Panel />
                   </PrivateRoute>
                 }>
-                  <Route path="users" element={<UsersPanel />} />
-                  <Route path="products" element={<ProductsPanel />} />
+                  <Route path="users" element={<UserManagement />} />
+                  <Route path="products" element={<MyProducts />} />
+                  <Route path="products/pending" element={<ProductManagement />} />
+                  <Route path="products/all" element={<ProductManagement />} />
                   <Route path="products/view/:id" element={<ProductView />} />
                   <Route path="products/edit/:id" element={<ProductEdit />} />
                   <Route path="products/create" element={<CreateProduct />} />
-                  <Route path="invoices" element={<InvoicesPanel />} />
+                  <Route path="invoices" element={<InvoiceManagement />} />
                   <Route path="payments" element={<PaymentsPanel />} />
-                  <Route path="categories" element={<CategoriesPanel />} />
+                  <Route path="categories" element={<CategoryManagement />} />
                   <Route path="notifications" element={<NotificationsPanel />} />
                   <Route path="reports/*" element={<ReportsPanel />} />
                   <Route path="settings" element={<SettingsPanel />} />

@@ -96,6 +96,21 @@ export const getCategory = async (id) => {
   return response.data;
 };
 
+export const createCategory = async (categoryData) => {
+  const response = await api.post('/categories', categoryData);
+  return response.data;
+};
+
+export const updateCategory = async (id, categoryData) => {
+  const response = await api.put(`/categories/${id}`, categoryData);
+  return response.data;
+};
+
+export const deleteCategory = async (id) => {
+  const response = await api.delete(`/categories/${id}`);
+  return response.data;
+};
+
 // Auth APIs
 export const sendOtp = async (phone) => {
   const response = await api.post('/auth/send-otp', { phone });
@@ -131,6 +146,22 @@ export const completeProfile = async (profileData) => {
 // Role selection API
 export const chooseRole = async (role) => {
   const response = await api.post('/users/choose-role', { role });
+  return response.data;
+};
+
+// Admin User APIs
+export const getUsers = async () => {
+  const response = await api.get('/users');
+  return response.data;
+};
+
+export const updateUserStatus = async (userId, isActive) => {
+  const response = await api.patch(`/users/${userId}/${isActive ? 'activate' : 'deactivate'}`);
+  return response.data;
+};
+
+export const assignUserRole = async (userId, role) => {
+  const response = await api.post(`/users/${userId}/roles`, { role });
   return response.data;
 };
 
@@ -220,6 +251,11 @@ export const getInvoice = async (id) => {
 
 export const markInvoiceAsPaid = async (id) => {
   const response = await api.patch(`/invoices/${id}/pay`);
+  return response.data;
+};
+
+export const getMyInvoices = async () => {
+  const response = await api.get('/invoices/my-invoices');
   return response.data;
 };
 
