@@ -56,7 +56,7 @@ const permissionToRoute = [
 ];
 
 const Panel = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [permissions, setPermissions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -83,6 +83,22 @@ const Panel = () => {
   }, [isAuthenticated, navigate]);
 
   const has = (codename) => permissions.some(p => p.codename === codename || p === codename);
+
+  const userRoles = user?.roles?.map(r => r.name) || [];
+  const isAdmin = userRoles.includes('admin');
+
+  const canView = (item) => {
+    if (!has(item.codename)) return false;
+
+    const isSellerRoute = item.path.startsWith('/panel/products') && !item.path.endsWith('/all');
+    const isAdminRoute = item.path.endsWith('/all');
+
+    if (isAdmin) return true;
+    if (userRoles.includes('seller')) return isSellerRoute;
+    if (userRoles.includes('buyer')) return !isSellerRoute && !isAdminRoute;
+
+    return true;
+  };
 
   // Build groups from explicit `group` metadata on permissionToRoute
   const groupMap = permissionToRoute.reduce((acc, item) => {
@@ -112,7 +128,7 @@ const Panel = () => {
   // compute final groups that have at least one permitted item
   const finalGroupKeys = visibleGroupKeys.filter(key => {
     const items = groupMap[key] || [];
-    return items.some(item => has(item.codename));
+    return items.some(canView);
   });
 
   const [openGroups, setOpenGroups] = useState(() => finalGroupKeys.reduce((a, g) => ({ ...a, [g]: true }), {}));
@@ -130,7 +146,7 @@ const Panel = () => {
                 {visibleGroupKeys.map(groupKey => {
                   const items = groupMap[groupKey] || [];
                   // only show the group if the user has at least one permission in it
-                  const permittedItems = items.filter(item => has(item.codename));
+                  const permittedItems = items.filter(canView);
                   if (permittedItems.length === 0) return null;
 
                   const displayLabel = GROUPS_ORDER.find(g => g.key === groupKey)?.label ?? groupKey;

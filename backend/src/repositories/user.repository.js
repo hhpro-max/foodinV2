@@ -16,7 +16,12 @@ class UserRepository extends BaseRepository {
 
   async findWithProfile(id) {
     return await this.findById(id, {
-      include: ['profile', 'naturalPerson', 'legalPerson'],
+      include: [
+        { model: this.sequelize.models.Profile, as: 'profile' },
+        { model: this.sequelize.models.NaturalPerson, as: 'naturalPerson' },
+        { model: this.sequelize.models.LegalPerson, as: 'legalPerson' },
+        { model: this.sequelize.models.Role, as: 'roles', attributes: ['name'] },
+      ],
     });
   }
 
