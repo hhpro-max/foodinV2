@@ -69,7 +69,7 @@ const UserManagement = () => {
               <td>{user.id}</td>
               <td>{user.phone_number}</td>
               <td>{user.is_active ? 'Active' : 'Inactive'}</td>
-              <td>{user.roles.map(role => role.name).join(', ')}</td>
+              <td>{user.roles && Array.isArray(user.roles) ? user.roles.map(role => role.name).join(', ') : 'No roles'}</td>
               <td>
                 <button onClick={() => handleStatusChange(user.id, !user.is_active)}>
                   {user.is_active ? 'Deactivate' : 'Activate'}

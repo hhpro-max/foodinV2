@@ -264,12 +264,18 @@ class UserService {
       users = await this.userRepo.getUsersByRole(role);
     } else {
       const offset = (page - 1) * limit;
-      users = await this.userRepo.findAll({}, [['createdAt', 'DESC']], limit, offset);
+      users = await this.userRepo.findAllWithRoles({}, [['createdAt', 'DESC']], limit, offset);
     }
     
-    // Sanitize users data
+    // Sanitize users data and convert Sequelize instances to plain objects
     const sanitizedUsers = users.map(user => {
-      const { password_hash, ...sanitizedUser } = user;
+      // Convert Sequelize model instance to plain object if needed
+      let userData = user;
+      if (user && typeof user.toJSON === 'function') {
+        userData = user.toJSON();
+      }
+      
+      const { password_hash, ...sanitizedUser } = userData;
       return sanitizedUser;
     });
     

@@ -43,6 +43,18 @@ class UserRepository extends BaseRepository {
     });
   }
 
+  async findAllWithRoles(conditions = {}, orderBy = [['createdAt', 'DESC']], limit = null, offset = null) {
+    return await this.model.findAll({
+      where: conditions,
+      order: orderBy,
+      limit,
+      offset,
+      include: [
+        { model: this.sequelize.models.Role, as: 'roles', attributes: ['name'] },
+      ],
+    });
+  }
+
   async getRoles(userId) {
     const user = await this.findWithRoles(userId);
     return user ? user.roles : [];
