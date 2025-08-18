@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  getSellerProducts,
+  getAllProductsAdmin,
   deleteProduct,
   updateProductStock
 } from '../../services/api';
@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import '../../styles/panel-table.css';
 
-const MyProducts = () => {
+const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,7 +22,6 @@ const MyProducts = () => {
   const fetchProducts = async (page = 1) => {
     setLoading(true);
     try {
-      // Only include filters that have values
       const params = {
         page,
         limit: 10
@@ -36,12 +35,12 @@ const MyProducts = () => {
         params.status = filters.status;
       }
       
-      const res = await getSellerProducts(params);
+      const res = await getAllProductsAdmin(params);
       setProducts(res.data.products || []);
       setTotalPages(res.data.pagination?.totalPages || 1);
       setCurrentPage(page);
     } catch (error) {
-      toast.error('Failed to fetch your products.');
+      toast.error('Failed to fetch products.');
       console.error(error);
     } finally {
       setLoading(false);
@@ -70,7 +69,6 @@ const MyProducts = () => {
       status: '',
       search: ''
     });
-    // Fetch products with no filters
     fetchProducts(1);
   };
 
@@ -79,11 +77,11 @@ const MyProducts = () => {
   };
 
   const handleDeleteProduct = async (productId) => {
-    if (window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+    if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         await deleteProduct(productId);
         toast.success('Product deleted successfully');
-        fetchProducts(currentPage); // Refresh current page
+        fetchProducts(currentPage);
       } catch (error) {
         toast.error('Failed to delete product');
         console.error(error);
@@ -93,9 +91,8 @@ const MyProducts = () => {
 
   const handleUpdateStock = async (productId) => {
     const input = prompt('Enter stock adjustment (use + to add, - to subtract):');
-    if (input === null) return; // User cancelled
+    if (input === null) return;
     
-    // Parse input to get operation and quantity
     let operation, quantity;
     if (input.startsWith('+')) {
       operation = 'add';
@@ -116,7 +113,7 @@ const MyProducts = () => {
     try {
       await updateProductStock(productId, { quantity, operation });
       toast.success('Stock updated successfully');
-      fetchProducts(currentPage); // Refresh current page
+      fetchProducts(currentPage);
     } catch (error) {
       toast.error('Failed to update stock');
       console.error(error);
@@ -149,13 +146,7 @@ const MyProducts = () => {
   return (
     <div className="panel-content-wrapper">
       <div className="panel-header">
-        <h2>My Products</h2>
-        <button
-          className="action-button edit-button"
-          onClick={() => navigate('/panel/products/create')}
-        >
-          Create Product
-        </button>
+        <h2>All Products (Admin)</h2>
       </div>
 
       <div className="panel-filters">
@@ -216,6 +207,7 @@ const MyProducts = () => {
                 <th>Status</th>
                 <th>Price</th>
                 <th>Stock</th>
+                <th>Seller</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -231,6 +223,7 @@ const MyProducts = () => {
                   </td>
                   <td>{product.salePrice ? `$${product.salePrice.toFixed(2)}` : 'N/A'}</td>
                   <td>{product.stockQuantity}</td>
+                  <td>{product.seller?.name || 'N/A'}</td>
                   <td>
                     <div className="action-buttons">
                       <button
@@ -287,4 +280,4 @@ const MyProducts = () => {
   );
 };
 
-export default MyProducts;
+export default AdminProducts;

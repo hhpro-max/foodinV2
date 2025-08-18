@@ -24,6 +24,7 @@ import ProductManagement from './pages/panel/ProductManagement';
 import CategoryManagement from './pages/panel/CategoryManagement';
 import InvoiceManagement from './pages/panel/InvoiceManagement';
 import MyProducts from './pages/panel/MyProducts';
+import AdminProducts from './pages/panel/AdminProducts';
 import CreateProduct from './pages/panel/CreateProduct';
 import ProductView from './pages/panel/ProductView';
 import ProductEdit from './pages/panel/ProductEdit';
@@ -117,7 +118,7 @@ function App() {
                   <Route path="users" element={<UserManagement />} />
                   <Route path="products" element={<MyProducts />} />
                   <Route path="products/pending" element={<ProductManagement />} />
-                  <Route path="products/all" element={<ProductManagement />} />
+                  <Route path="products/all" element={<AdminProducts />} />
                   <Route path="products/view/:id" element={<ProductView />} />
                   <Route path="products/edit/:id" element={<ProductEdit />} />
                   <Route path="products/create" element={<CreateProduct />} />

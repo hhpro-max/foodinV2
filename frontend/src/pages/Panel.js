@@ -87,18 +87,7 @@ const Panel = () => {
   const userRoles = user?.roles?.map(r => r.name) || [];
   const isAdmin = userRoles.includes('admin');
 
-  const canView = (item) => {
-    if (!has(item.codename)) return false;
-
-    const isSellerRoute = item.path.startsWith('/panel/products') && !item.path.endsWith('/all');
-    const isAdminRoute = item.path.endsWith('/all');
-
-    if (isAdmin) return true;
-    if (userRoles.includes('seller')) return isSellerRoute;
-    if (userRoles.includes('buyer')) return !isSellerRoute && !isAdminRoute;
-
-    return true;
-  };
+  const canView = (item) => has(item.codename);
 
   // Build groups from explicit `group` metadata on permissionToRoute
   const groupMap = permissionToRoute.reduce((acc, item) => {

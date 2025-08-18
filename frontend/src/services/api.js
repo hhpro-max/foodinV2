@@ -48,6 +48,15 @@ export const createProduct = async (formData) => {
   return response.data;
 };
 
+
+export const updateProduct = async (productId, formData) => {
+  // formData must be a FormData instance with fields matching backend expectations
+  const response = await api.put(`/products/${productId}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
+
 export const getProduct = async (id) => {
   const response = await api.get(`/products/${id}`);
   // Normalize response shapes so callers receive the actual product object.
@@ -55,6 +64,11 @@ export const getProduct = async (id) => {
   const data = response.data;
   const product = data?.data?.product ?? data?.product ?? data;
   return product;
+};
+
+export const updateProductStock = async (productId, stockData) => {
+  const response = await api.patch(`/products/${productId}/stock`, stockData);
+  return response.data;
 };
 
 // Admin product APIs
@@ -76,14 +90,21 @@ export const getSellerProducts = async (params = {}) => {
 };
 
 export const approveProduct = async (productId, approvalData) => {
-  const response = await api.patch(`/products/${productId}/approve`, approvalData);
+  const response = await api.post(`/products/${productId}/approve`, approvalData);
+  return response.data;
+};
+
+export const deleteProduct = async (productId) => {
+  const response = await api.delete(`/products/${productId}`);
   return response.data;
 };
 
 export const rejectProduct = async (productId, rejectionData) => {
-  const response = await api.patch(`/products/${productId}/reject`, rejectionData);
+  const response = await api.post(`/products/${productId}/reject`, rejectionData);
   return response.data;
 };
+
+
 
 // Category APIs
 export const getCategories = async () => {
