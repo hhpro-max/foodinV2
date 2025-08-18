@@ -264,7 +264,7 @@ class UserService {
       users = await this.userRepo.getUsersByRole(role);
     } else {
       const offset = (page - 1) * limit;
-      users = await this.userRepo.findAll({}, 'created_at DESC', limit, offset);
+      users = await this.userRepo.findAll({}, [['createdAt', 'DESC']], limit, offset);
     }
     
     // Sanitize users data
