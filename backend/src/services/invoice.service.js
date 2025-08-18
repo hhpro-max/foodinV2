@@ -60,6 +60,10 @@ class InvoiceService {
       return plainInvoice;
     });
   }
+
+  async getAllInvoices() {
+    return this.invoiceRepository.getAllInvoices();
+  }
 }
 
 module.exports = InvoiceService;

@@ -67,6 +67,12 @@ const seedData = {
     // System management
     { codename: 'system.settings', name: 'System Settings', description: 'Can manage system settings' },
     { codename: 'system.logs', name: 'System Logs', description: 'Can view system logs' },
+
+    // Additional permissions can be added here
+    { codename: 'cart.statistics', name: 'View cart statistics', description: 'Can view users cart information statistics' },
+    { codename: 'cart.abandoned', name: 'View abandoned carts', description: 'Can view abandoned carts' },
+    { codename: 'cart.view_all', name: 'View all cart', description: 'Can view all carts' },
+
   ],
 
   rolePermissions: {
@@ -78,7 +84,7 @@ const seedData = {
       'category.view', 'category.create', 'category.update', 'category.delete',
       'notification.view', 'notification.send', 'notification.manage',
       'report.sales', 'report.financial', 'report.user_activity',
-      'system.settings', 'system.logs'
+      'system.settings', 'system.logs' , 'cart.statistics', 'cart.abandoned', 'cart.view_all'
     ],
     seller: [
       'product.view', 'product.create', 'product.update',

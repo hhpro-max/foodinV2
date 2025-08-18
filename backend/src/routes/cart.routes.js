@@ -363,7 +363,7 @@ router.delete('/clear', cartController.clearCart);
  *         description: Server error
  */
 router.get('/admin/stats',
-  auth.authorize(['admin']),
+  auth.checkPermission('cart.statistics'),
   cartController.getCartStats
 );
 
@@ -398,7 +398,7 @@ router.get('/admin/stats',
  *         description: Server error
  */
 router.get('/admin/abandoned',
-  auth.authorize(['admin']),
+  auth.checkPermission('cart.abandoned'),
   validateQuery(adminQuerySchema),
   cartController.getAbandonedCarts
 );

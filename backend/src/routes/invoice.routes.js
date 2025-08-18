@@ -3,7 +3,7 @@ const InvoiceController = require('../controllers/invoice.controller');
 const { validateRequest, validateParams } = require('../middlewares/validateRequest');
 const { orderId } = require('../validations/order.validation');
 const { invoiceId, createInvoice } = require('../validations/invoice.validation');
-const { authenticate } = require('../middlewares/auth');
+const { authenticate, checkPermission } = require('../middlewares/auth');
 
 const router = express.Router();
 
@@ -153,6 +153,36 @@ module.exports = (sequelize) => {
   router.get('/my-invoices',
     authenticate,
     (req, res, next) => invoiceController.getMyInvoices(req, res, next)
+  );
+
+  /**
+   * @swagger
+   * /invoices:
+   *   get:
+   *     summary: Get all invoices (requires invoice.view_all permission)
+   *     tags: [Invoices]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: A list of all invoices
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Invoice'
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden - Insufficient permissions
+   *       500:
+   *         description: Server error
+   */
+  router.get('/',
+    authenticate,
+    checkPermission('invoice.view_all'),
+    (req, res, next) => invoiceController.getAllInvoices(req, res, next)
   );
 
   return router;

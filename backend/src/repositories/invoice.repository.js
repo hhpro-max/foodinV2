@@ -41,6 +41,7 @@ class InvoiceRepository extends BaseRepository {
       ],
     });
   }
+  
   async findByUser(userId, isSeller) {
     const { DeliveryConfirmation } = require('../models');
     const whereClause = isSeller ? { sellerId: userId } : { buyerId: userId };
@@ -64,6 +65,16 @@ class InvoiceRepository extends BaseRepository {
       ],
     });
   }
-}
 
+  async getAllInvoices() {
+    return await this.model.findAll({
+      include: [
+        {
+          model: InvoiceItem,
+          as: 'invoiceItems',
+        },
+      ],
+    });
+  }
+}
 module.exports = InvoiceRepository;

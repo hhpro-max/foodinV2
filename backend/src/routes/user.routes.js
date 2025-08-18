@@ -239,7 +239,6 @@ router.get('/permissions', userController.getUserPermissions);
 router.post('/choose-role', validateRequest(chooseRoleSchema), userController.chooseRole);
 
 // Admin only routes
-router.use(auth.authorize(['admin'])); // Apply admin authorization to all routes below
 
 /**
  * @swagger
@@ -296,7 +295,7 @@ router.use(auth.authorize(['admin'])); // Apply admin authorization to all route
  *       500:
  *         description: Server error
  */
-router.get('/', userController.getAllUsers);
+router.get('/', auth.checkPermission('user.view'),userController.getAllUsers);
 
 /**
  * @swagger
@@ -353,6 +352,7 @@ router.get('/', userController.getAllUsers);
  *         description: Server error
  */
 router.post('/:userId/roles',
+  auth.checkPermission('user.manage_roles'),
   validateParams(commonSchemas.userId),
   validateRequest(assignRoleSchema),
   userController.assignRole
@@ -413,6 +413,7 @@ router.post('/:userId/roles',
  *         description: Server error
  */
 router.delete('/:userId/roles',
+  auth.checkPermission('user.manage_roles'),
   validateParams(commonSchemas.userId),
   validateRequest(assignRoleSchema),
   userController.removeRole
@@ -458,6 +459,7 @@ router.delete('/:userId/roles',
  *         description: Server error
  */
 router.patch('/:userId/deactivate',
+  auth.checkPermission('user.update'),
   validateParams(commonSchemas.userId),
   userController.deactivateUser
 );
@@ -502,6 +504,7 @@ router.patch('/:userId/deactivate',
  *         description: Server error
  */
 router.patch('/:userId/activate',
+  auth.checkPermission('user.update'),
   validateParams(commonSchemas.userId),
   userController.activateUser
 );

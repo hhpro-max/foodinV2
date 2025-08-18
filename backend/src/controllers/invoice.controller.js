@@ -52,6 +52,15 @@ class InvoiceController {
       next(error);
     }
   }
+
+  async getAllInvoices(req, res, next) {
+    try {
+      const invoices = await this.invoiceService.getAllInvoices();
+      res.status(200).json(invoices);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = InvoiceController;
