@@ -297,8 +297,40 @@ router.post('/choose-role', validateRequest(chooseRoleSchema), userController.ch
  */
 router.get('/', auth.checkPermission('user.view'),userController.getAllUsers);
 
-/**
- * @swagger
+ /**
+  * @swagger
+  * /users/roles:
+  *   get:
+  *     summary: Get all roles (Admin only)
+  *     tags: [Users]
+  *     security:
+  *       - bearerAuth: []
+  *     responses:
+  *       200:
+  *         description: Roles retrieved successfully
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 status:
+  *                   type: string
+  *                   example: "success"
+  *                 data:
+  *                   type: array
+  *                   items:
+  *                     $ref: '#/components/schemas/Role'
+  *       401:
+  *         description: Unauthorized
+  *       403:
+  *         description: Forbidden - Admin access required
+  *       500:
+  *         description: Server error
+  */
+ router.get('/roles', auth.checkPermission('user.view'), userController.getAllRoles);
+
+ /**
+  * @swagger
  * /users/{userId}/roles:
  *   post:
  *     summary: Assign a role to a user (Admin only)

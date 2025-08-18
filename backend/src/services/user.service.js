@@ -289,6 +289,15 @@ class UserService {
     };
   }
 
+  async getAllRoles() {
+    const roles = await this.roleRepo.findAll();
+    return roles.map(role => ({
+      id: role.id,
+      name: role.name,
+      description: role.description
+    }));
+  }
+
   // Helper methods
   normalizePhone(phone) {
     // Remove all non-digit characters

@@ -51,6 +51,7 @@ class UserRepository extends BaseRepository {
       offset,
       include: [
         { model: this.sequelize.models.Role, as: 'roles', attributes: ['name'] },
+        { model: this.sequelize.models.Profile, as: 'profile' },
       ],
     });
   }

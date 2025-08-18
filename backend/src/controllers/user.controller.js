@@ -115,6 +115,15 @@ const getAllUsers = catchAsync(async (req, res) => {
   });
 });
 
+const getAllRoles = catchAsync(async (req, res) => {
+  const roles = await req.container.userService.getAllRoles();
+  
+  res.status(200).json({
+    status: 'success',
+    data: { roles },
+  });
+});
+
 const chooseRole = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const { role } = req.body;
@@ -137,5 +146,6 @@ module.exports = {
   deactivateUser,
   activateUser,
   getAllUsers,
+  getAllRoles,
   chooseRole,
 };

@@ -155,13 +155,18 @@ export const getUsers = async () => {
   return response.data;
 };
 
+export const getRoles = async () => {
+  const response = await api.get('/users/roles');
+  return response.data;
+};
+
 export const updateUserStatus = async (userId, isActive) => {
   const response = await api.patch(`/users/${userId}/${isActive ? 'activate' : 'deactivate'}`);
   return response.data;
 };
 
-export const assignUserRole = async (userId, role) => {
-  const response = await api.post(`/users/${userId}/roles`, { role });
+export const assignUserRole = async (userId, roleId) => {
+  const response = await api.post(`/users/${userId}/roles`, { roleId });
   return response.data;
 };
 
