@@ -108,10 +108,14 @@ const ProductDetail = () => {
     );
   }
 
-  const images = product.images?.map(img => ({
-    original: `http://localhost:3000/${img.image_url}`,
-    thumbnail: `http://localhost:3000/${img.image_url}`,
-  })) || [];
+  const images = product.images?.map(img => {
+    const imageUrl = img.url || img.image_url;
+    const fullUrl = imageUrl.startsWith('http') ? imageUrl : `http://localhost:3000${imageUrl}`;
+    return {
+      original: fullUrl,
+      thumbnail: fullUrl,
+    };
+  }) || [];
 
   // Add placeholder image if no images
   if (images.length === 0) {

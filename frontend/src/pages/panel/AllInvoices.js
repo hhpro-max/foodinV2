@@ -1,63 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { getMyInvoices, getDeliveryInformationByInvoiceId, confirmDeliveryWithCode, getUserById, getAddressById, downloadInvoicePDF } from '../../services/api';
+import React, { useState, useEffect } from 'react';
+import { getInvoices, getUserById, getAddressById, downloadInvoicePDF } from '../../services/api';
 import toast from 'react-hot-toast';
 import '../../styles/panel-table.css';
-import '../../styles/modals.css';
 import './panel-invoices.css';
 
-const Invoices = () => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+const AllInvoices = () => {
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
-  const [deliveryInfo, setDeliveryInfo] = useState(null);
-  const [showDeliveryModal, setShowDeliveryModal] = useState(false);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [deliveryCode, setDeliveryCode] = useState('');
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [confirmError, setConfirmError] = useState(null);
   const [buyerDetails, setBuyerDetails] = useState(null);
   const [sellerDetails, setSellerDetails] = useState(null);
   const [buyerAddress, setBuyerAddress] = useState(null);
   const [sellerAddress, setSellerAddress] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true);
-        const resp = await getMyInvoices();
-        // The API returns the invoices array directly
-        setItems(Array.isArray(resp) ? resp : []);
-      } catch (err) {
-        console.error('Failed to load invoices', err);
-        setError('Failed to load invoices');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
-
-  const handleViewDeliveryInfo = async (invoiceId) => {
+  const fetchInvoices = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const resp = await getDeliveryInformationByInvoiceId(invoiceId);
-      const data = resp?.data ?? resp ?? {};
-      setDeliveryInfo(data);
-      setSelectedInvoice(invoiceId);
-      setShowDeliveryModal(true);
-    } catch (err) {
-      console.error('Failed to load delivery information', err);
-      setError('Failed to load delivery information');
+      const res = await getInvoices();
+      // The API returns the invoices array directly
+      setInvoices(Array.isArray(res) ? res : []);
+    } catch (error) {
+      console.error('Failed to fetch invoices:', error);
+      setError('Failed to fetch invoices');
+      toast.error('Failed to fetch invoices');
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleConfirmDelivery = (invoiceId) => {
-    setSelectedInvoice(invoiceId);
-    setDeliveryCode('');
-    setConfirmError(null);
-    setShowConfirmModal(true);
   };
 
   const handleViewDetails = async (invoice) => {
@@ -116,38 +88,9 @@ const Invoices = () => {
     }
   };
 
-  const handleConfirmSubmit = async () => {
-    if (!deliveryCode || deliveryCode.length !== 6) {
-      setConfirmError('Please enter a valid 6-digit delivery code');
-      return;
-    }
-
-    try {
-      setConfirmLoading(true);
-      await confirmDeliveryWithCode({
-        delivery_code: deliveryCode,
-        seller_invoice_id: selectedInvoice
-      });
-      
-      // Update the invoice status in the list
-      setItems(prevItems =>
-        prevItems.map(item =>
-          item.id === selectedInvoice
-            ? { ...item, status: 'DELIVERED' }
-            : item
-        )
-      );
-      
-      setShowConfirmModal(false);
-      setDeliveryCode('');
-      setConfirmError(null);
-    } catch (err) {
-      console.error('Failed to confirm delivery', err);
-      setConfirmError(err.response?.data?.message || 'Failed to confirm delivery');
-    } finally {
-      setConfirmLoading(false);
-    }
-  };
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
 
   const getStatusBadgeClass = (status) => {
     switch (status?.toLowerCase()) {
@@ -163,7 +106,7 @@ const Invoices = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading invoices...</div>;
+    return <div className="loading">Loading all invoices...</div>;
   }
 
   if (error) {
@@ -173,10 +116,17 @@ const Invoices = () => {
   return (
     <div className="panel-content-wrapper">
       <div className="panel-header">
-        <h2>My Invoices</h2>
+        <h2>All Invoices</h2>
+        <button 
+          className="refresh-button"
+          onClick={fetchInvoices}
+          disabled={loading}
+        >
+          {loading ? 'Refreshing...' : 'Refresh'}
+        </button>
       </div>
 
-      {items.length === 0 ? (
+      {invoices.length === 0 ? (
         <div className="no-data">No invoices found</div>
       ) : (
         <table className="panel-table">
@@ -184,56 +134,29 @@ const Invoices = () => {
             <tr>
               <th>Invoice ID</th>
               <th>Order ID</th>
+              <th>Buyer ID</th>
               <th>Total Amount</th>
               <th>Status</th>
               <th>Created At</th>
-              <th>Invoice Items</th>
-              <th>Delivery Code</th>
+              <th>Updated At</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {items.map(invoice => (
+            {invoices.map((invoice) => (
               <tr key={invoice.id}>
                 <td>{invoice.id}</td>
-                <td>{invoice.orderId}</td>
-                <td>${invoice.totalAmount?.toFixed(2) || '0.00'}</td>
+                <td>{invoice.orderId || invoice.order_id}</td>
+                <td>{invoice.buyerId || invoice.buyer_id}</td>
+                <td>${invoice.totalAmount?.toFixed(2) || invoice.total_amount?.toFixed(2) || '0.00'}</td>
                 <td>
                   <span className={getStatusBadgeClass(invoice.status)}>
                     {invoice.status || 'Unknown'}
                   </span>
                 </td>
-                <td>{new Date(invoice.createdAt).toLocaleDateString()}</td>
-                <td>
-                  {invoice.invoiceItems && invoice.invoiceItems.length > 0 ? (
-                    <div>
-                      {invoice.invoiceItems.map((item, index) => (
-                        <div key={index} className="invoice-item">
-                          <div>Product ID: {item.productId}</div>
-                          <div>Quantity: {item.quantity}</div>
-                          <div>Unit Price: ${item.unitPrice?.toFixed(2) || '0.00'}</div>
-                          <div>Total Price: ${item.totalPrice?.toFixed(2) || '0.00'}</div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div>No items</div>
-                  )}
-                </td>
-                <td>
-                  {invoice.deliveryCode ? (
-                    <span className="delivery-code-badge">{invoice.deliveryCode}</span>
-                  ) : (
-                    <span className="no-code">No code</span>
-                  )}
-                </td>
+                <td>{invoice.createdAt ? new Date(invoice.createdAt).toLocaleDateString() : 'N/A'}</td>
+                <td>{invoice.updatedAt ? new Date(invoice.updatedAt).toLocaleDateString() : 'N/A'}</td>
                 <td className="action-buttons">
-                  <button
-                    className="action-button edit-button"
-                    onClick={() => handleViewDeliveryInfo(invoice.id)}
-                  >
-                    Delivery Info
-                  </button>
                   <button
                     className="action-button view-button"
                     onClick={() => handleViewDetails(invoice)}
@@ -241,98 +164,74 @@ const Invoices = () => {
                   >
                     {detailLoading ? 'Loading...' : 'View Details'}
                   </button>
-                  {invoice.deliveryCode ? (
-                    <span className="delivery-code-display">{invoice.deliveryCode}</span>
-                  ) : (
-                    invoice.status?.toLowerCase() !== 'delivered' && (
-                      <button
-                        className="action-button stock-button"
-                        onClick={() => handleConfirmDelivery(invoice.id)}
-                      >
-                        Confirm Delivery
-                      </button>
-                    )
-                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
+    </div>
+  );
 
-      {/* Delivery Information Modal */}
-      {showDeliveryModal && deliveryInfo && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Delivery Information</h3>
-            <div className="form-group">
-              <label>Delivery Address:</label>
-              <p>{deliveryInfo.deliveryAddress || 'N/A'}</p>
-            </div>
-            <div className="form-group">
-              <label>Delivery Date Requested:</label>
-              <p>{deliveryInfo.deliveryDateRequested ? new Date(deliveryInfo.deliveryDateRequested).toLocaleDateString() : 'N/A'}</p>
-            </div>
-            <div className="form-group">
-              <label>Status:</label>
-              <p>{deliveryInfo.status || 'N/A'}</p>
-            </div>
-            <div className="form-group">
-              <label>Special Instructions:</label>
-              <p>{deliveryInfo.specialInstructions || 'None'}</p>
-            </div>
-            <div className="modal-actions">
-              <button
-                className="action-button"
-                onClick={() => setShowDeliveryModal(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
+  return (
+    <>
+      <div className="panel-content-wrapper">
+        <div className="panel-header">
+          <h2>All Invoices</h2>
+          <button
+            className="refresh-button"
+            onClick={fetchInvoices}
+            disabled={loading}
+          >
+            {loading ? 'Refreshing...' : 'Refresh'}
+          </button>
         </div>
-      )}
 
-      {/* Delivery Confirmation Modal */}
-      {showConfirmModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Confirm Delivery</h3>
-            <div className="form-group">
-              <label>Delivery Code:</label>
-              <input
-                type="text"
-                value={deliveryCode}
-                onChange={(e) => setDeliveryCode(e.target.value)}
-                placeholder="Enter 6-digit code"
-                maxLength="6"
-                className="form-control"
-              />
-            </div>
-            {confirmError && (
-              <div className="error" style={{ marginBottom: '10px' }}>
-                {confirmError}
-              </div>
-            )}
-            <div className="modal-actions">
-              <button
-                className="action-button"
-                onClick={() => setShowConfirmModal(false)}
-                disabled={confirmLoading}
-              >
-                Cancel
-              </button>
-              <button
-                className="action-button activate-button"
-                onClick={handleConfirmSubmit}
-                disabled={confirmLoading}
-              >
-                {confirmLoading ? 'Confirming...' : 'Confirm Delivery'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        {invoices.length === 0 ? (
+          <div className="no-data">No invoices found</div>
+        ) : (
+          <table className="panel-table">
+            <thead>
+              <tr>
+                <th>Invoice ID</th>
+                <th>Order ID</th>
+                <th>Buyer ID</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {invoices.map((invoice) => (
+                <tr key={invoice.id}>
+                  <td>{invoice.id}</td>
+                  <td>{invoice.orderId || invoice.order_id}</td>
+                  <td>{invoice.buyerId || invoice.buyer_id}</td>
+                  <td>${invoice.totalAmount?.toFixed(2) || invoice.total_amount?.toFixed(2) || '0.00'}</td>
+                  <td>
+                    <span className={getStatusBadgeClass(invoice.status)}>
+                      {invoice.status || 'Unknown'}
+                    </span>
+                  </td>
+                  <td>{invoice.createdAt ? new Date(invoice.createdAt).toLocaleDateString() : 'N/A'}</td>
+                  <td>{invoice.updatedAt ? new Date(invoice.updatedAt).toLocaleDateString() : 'N/A'}</td>
+                  <td className="action-buttons">
+                    <button
+                      className="action-button view-button"
+                      onClick={() => handleViewDetails(invoice)}
+                      disabled={detailLoading}
+                    >
+                      {detailLoading ? 'Loading...' : 'View Details'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
       {/* Invoice Detail Modal */}
       {showDetailModal && selectedInvoice && (
@@ -477,8 +376,8 @@ const Invoices = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
-export default Invoices;
+export default AllInvoices;

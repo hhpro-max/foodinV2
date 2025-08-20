@@ -13,12 +13,23 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+    console.log('Request interceptor - Token check:', {
+      hasToken: !!token,
+      tokenLength: token ? token.length : 0,
+      tokenPrefix: token ? token.substring(0, 10) + '...' : null
+    });
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log('Request interceptor - Final config:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers
+    });
     return config;
   },
   (error) => {
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
@@ -26,9 +37,21 @@ api.interceptors.request.use(
 // Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => {
+    console.log('Response interceptor - Success:', {
+      url: response.config.url,
+      status: response.status,
+      data: response.data
+    });
     return response;
   },
   (error) => {
+    console.error('Response interceptor - Error:', {
+      url: error.config?.url,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message
+    });
     // Let callers handle 401/unauthorized cases (e.g. inactive users)
     return Promise.reject(error);
   }
@@ -275,13 +298,37 @@ export const getInvoice = async (id) => {
   return response.data;
 };
 
+export const getUserById = async (userId) => {
+  const response = await api.get(`/users/${userId}`);
+  return response.data;
+};
+
+export const getAddressById = async (addressId) => {
+  const response = await api.get(`/addresses/${addressId}`);
+  return response.data;
+};
+
+export const downloadInvoicePDF = async (invoiceId) => {
+  const response = await api.get(`/invoices/${invoiceId}/pdf`, {
+    responseType: 'blob'
+  });
+  return response.data;
+};
+
 export const markInvoiceAsPaid = async (id) => {
   const response = await api.patch(`/invoices/${id}/pay`);
   return response.data;
 };
 
 export const getMyInvoices = async () => {
+  console.log('Making GET request to /invoices/my-invoices');
+  console.log('API config:', {
+    baseURL: api.defaults.baseURL,
+    timeout: api.defaults.timeout,
+    headers: api.defaults.headers
+  });
   const response = await api.get('/invoices/my-invoices');
+  console.log('API Response received:', response);
   return response.data;
 };
 
@@ -312,6 +359,11 @@ export const getDeliveryInformation = async () => {
   return response.data;
 };
 
+export const getDeliveryInformationByInvoiceId = async (invoiceId) => {
+  const response = await api.get(`/delivery-informations/invoice/${invoiceId}`);
+  return response.data;
+};
+
 export const createDeliveryInformation = async (deliveryData) => {
   const response = await api.post('/delivery-informations', deliveryData);
   return response.data;
@@ -319,6 +371,11 @@ export const createDeliveryInformation = async (deliveryData) => {
 
 export const confirmDelivery = async (orderId, confirmationData) => {
   const response = await api.post(`/delivery-confirmations/${orderId}`, confirmationData);
+  return response.data;
+};
+
+export const confirmDeliveryWithCode = async (confirmationData) => {
+  const response = await api.post('/delivery-confirmations/confirm', confirmationData);
   return response.data;
 };
 

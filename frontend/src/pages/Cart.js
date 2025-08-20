@@ -102,13 +102,13 @@ const Cart = () => {
               const productName = item.product?.name || item.name || 'Product Name';
               const productCategory = item.product?.category?.name || item.category?.name || item.category || 'Category';
               const tags = item.product?.tags || item.tags || [];
-              const imagePath = item.product?.images?.[0]?.image_url || item.image_url || item.images?.[0]?.image_url || null;
+              const imagePath = item.product?.images?.[0]?.url || item.product?.images?.[0]?.image_url || item.image_url || item.images?.[0]?.image_url || null;
 
               return (
                 <div key={item.id} className="cart-item">
                   <div className="item-image">
                     {imagePath ? (
-                      <img src={`http://localhost:3000/${imagePath}`} alt={productName} />
+                      <img src={`http://localhost:3000${imagePath}`} alt={productName} />
                     ) : (
                       <div className="image-placeholder">
                         <FaShoppingBag />

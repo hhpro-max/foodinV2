@@ -11,7 +11,8 @@ const InvoiceManagement = () => {
     setLoading(true);
     try {
       const res = await getMyInvoices();
-      setInvoices(res.data.invoices || []);
+      // The API returns the invoices array directly
+      setInvoices(Array.isArray(res) ? res : []);
     } catch (error) {
       toast.error('Failed to fetch invoices.');
       console.error(error);

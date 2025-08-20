@@ -211,7 +211,7 @@ const MyProducts = () => {
           <table className="panel-table">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>Image</th>
                 <th>Name</th>
                 <th>Status</th>
                 <th>Price</th>
@@ -222,7 +222,25 @@ const MyProducts = () => {
             <tbody>
               {products.map((product) => (
                 <tr key={product.id}>
-                  <td>{product.id.substring(0, 8)}...</td>
+                  <td>
+                    <div className="product-thumbnail">
+                      {product.images && product.images.length > 0 ? (
+                        <img
+                          src={product.images[0].url.startsWith('http')
+                            ? product.images[0].url
+                            : `http://localhost:3000${product.images[0].url}`}
+                          alt={product.name}
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/50x50?text=No+Image';
+                          }}
+                        />
+                      ) : (
+                        <div className="no-image-placeholder">
+                          <img src="https://via.placeholder.com/50x50?text=No+Image" alt="No image" />
+                        </div>
+                      )}
+                    </div>
+                  </td>
                   <td>{product.name}</td>
                   <td>
                     <span className={getStatusBadgeClass(product.status)}>

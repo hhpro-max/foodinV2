@@ -33,7 +33,10 @@ const ProductCard = ({ product }) => {
 
   const getImageUrl = () => {
     if (product.images && product.images.length > 0) {
-      return `http://localhost:3000/${product.images[0].image_url}`;
+      // Use the image URL directly from the backend response
+      // The backend already provides the full path including /uploads/
+      const imageUrl = product.images[0].url || product.images[0].image_url;
+      return imageUrl.startsWith('http') ? imageUrl : `http://localhost:3000${imageUrl}`;
     }
     return 'https://via.placeholder.com/300x200?text=No+Image';
   };

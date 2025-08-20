@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs').promises;
 
 class ProductService {
-  constructor({ productRepo, userRepo, categoryRepo, productImageRepo, productApprovalRepo, tagRepo, notificationService }) {
+  constructor({ productRepo, userRepo, categoryRepo, productImageRepo, productApprovalRepo, tagRepo, notificationService, imageService }) {
     this.productRepo = productRepo;
     this.userRepo = userRepo;
     this.categoryRepo = categoryRepo;
@@ -11,6 +11,7 @@ class ProductService {
     this.productApprovalRepo = productApprovalRepo;
     this.tagRepo = tagRepo;
     this.notificationService = notificationService;
+    this.imageService = imageService;
   }
 
   async createProduct(sellerId, productData, imageFiles = []) {
@@ -46,7 +47,7 @@ class ProductService {
 
     // Handle image uploads
     if (imageFiles && imageFiles.length > 0) {
-      await this.handleProductImages(product.id, imageFiles);
+      await this.imageService.saveProductImages(product.id, imageFiles);
     }
 
     // Handle tags
@@ -116,7 +117,7 @@ class ProductService {
 
     // Handle new images
     if (imageFiles && imageFiles.length > 0) {
-      await this.handleProductImages(productId, imageFiles);
+      await this.imageService.saveProductImages(productId, imageFiles);
     }
 
     // Handle tags
@@ -356,30 +357,6 @@ class ProductService {
     return updatedProduct;
   }
 
-  async handleProductImages(productId, imageFiles) {
-    // In production, upload to cloud storage (AWS S3, etc.)
-    // For now, simulate image handling
-    const uploadDir = path.join(__dirname, '../../uploads/products');
-    
-    try {
-      await fs.mkdir(uploadDir, { recursive: true });
-    } catch (error) {
-      // Directory already exists
-    }
-
-    for (let i = 0; i < imageFiles.length; i++) {
-      const file = imageFiles[i];
-      const filename = `${productId}_${Date.now()}_${i}.jpg`;
-      const filepath = path.join(uploadDir, filename);
-      
-      // In real implementation, save the file
-      // await fs.writeFile(filepath, file.buffer);
-      
-      const imageUrl = `/uploads/products/${filename}`;
-      
-      await this.productImageRepo.createForProduct(productId, imageUrl, `${file.originalname}`, i, i === 0);
-    }
-  }
 
   async handleProductTags(productId, tagNames) {
     const product = await this.productRepo.findById(productId);

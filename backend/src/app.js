@@ -21,6 +21,7 @@ const NaturalPersonRepository = require('./repositories/natural_person.repositor
 const LegalPersonRepository = require('./repositories/legal_person.repository');
 const RoleRepository = require('./repositories/role.repository');
 const ProductImageRepository = require('./repositories/product_image.repository');
+const ImageRepository = require('./repositories/image.repository');
 const ProductApprovalRepository = require('./repositories/product_approval.repository');
 const TagRepository = require('./repositories/tag.repository');
 
@@ -32,6 +33,7 @@ const CartService = require('./services/cart.service');
 const OTPService = require('./services/otp.service');
 const AuthService = require('./services/auth.service');
 const CategoryService = require('./services/category.service');
+const ImageService = require('./services/image.service');
 
 // Import routes
 const userRoutes = require('./routes/user.routes');
@@ -45,9 +47,10 @@ const orderRoutes = require('./routes/order.routes');
 const deliveryConfirmationRoutes = require('./routes/delivery_confirmation.routes');
 const deliveryInformationRoutes = require('./routes/delivery_information.routes');
 const categoryRoutes = require('./routes/category.routes');
+const imageRoutes = require('./routes/image.routes');
 
 const app = express();
-
+/*
 // Security middleware
 app.use(helmet());
 
@@ -56,6 +59,13 @@ app.use(cors({
   origin: process.env.FRONTEND_URL || ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
 }));
+*/
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false, // disable CORP
+    contentSecurityPolicy: false,     // disable CSP
+  })
+);
 
 // Logging middleware
 if (process.env.NODE_ENV === 'development') {
@@ -94,6 +104,7 @@ app.use((req, res, next) => {
   const cartRepo = new CartRepository(sequelize);
   const roleRepo = new RoleRepository(sequelize);
   const productImageRepo = new ProductImageRepository(sequelize);
+  const imageRepo = new ImageRepository(sequelize);
   const productApprovalRepo = new ProductApprovalRepository(sequelize);
   const tagRepo = new TagRepository(sequelize);
   
@@ -103,6 +114,7 @@ app.use((req, res, next) => {
   const userService = new UserService({ userRepo, profileRepo, otpService, roleRepo, naturalPersonRepo, legalPersonRepo });
   const addressService = new AddressService({ addressRepo, userRepo });
   const categoryService = new CategoryService({ categoryRepo });
+  const imageService = new ImageService({ imageRepository: imageRepo });
   const productService = new ProductService({
     productRepo,
     userRepo,
@@ -110,7 +122,8 @@ app.use((req, res, next) => {
     productImageRepo,
     productApprovalRepo,
     tagRepo,
-    notificationService: null // Will be implemented later
+    notificationService: null, // Will be implemented later
+    imageService
   });
   const cartService = new CartService({ cartRepo, productRepo, userRepo });
   
@@ -126,12 +139,14 @@ app.use((req, res, next) => {
     legalPersonRepo,
     roleRepo,
     productImageRepo,
+    imageRepo,
     productApprovalRepo,
     tagRepo,
     userService,
     addressService,
     categoryService,
     productService,
+    imageService,
     cartService,
     otpService,
     authService,
@@ -155,6 +170,7 @@ apiRouter.use('/orders', orderRoutes());
 apiRouter.use('/delivery-confirmations', deliveryConfirmationRoutes);
 apiRouter.use('/delivery-informations', deliveryInformationRoutes);
 apiRouter.use('/categories', categoryRoutes);
+apiRouter.use('/images', imageRoutes);
 
 app.use('/api/v1', apiRouter);
 
