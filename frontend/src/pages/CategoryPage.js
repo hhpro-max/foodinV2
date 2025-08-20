@@ -1,27 +1,43 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import CategoryFilter from '../components/CategoryFilter';
 import TagCloud from '../components/TagCloud';
 import ProductGrid from '../components/ProductGrid';
-import { getProducts, getCategories } from '../services/api';
+import { getProducts, getCategories, getCategory } from '../services/api';
 
-const Home = () => {
-  const [searchParams] = useSearchParams();
+const CategoryPage = () => {
+  const { id: categoryIdFromUrl } = useParams();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(categoryIdFromUrl);
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0 });
   const [loading, setLoading] = useState(true);
+  const [categoryInfo, setCategoryInfo] = useState(null);
+
+  // Fetch category information
+  useEffect(() => {
+    const fetchCategoryInfo = async () => {
+      try {
+        const response = await getCategory(categoryIdFromUrl);
+        setCategoryInfo(response);
+      } catch (error) {
+        console.error('Error fetching category info:', error);
+      }
+    };
+
+    fetchCategoryInfo();
+  }, [categoryIdFromUrl]);
 
   // Fetch products with current filters
   const fetchProducts = useCallback(async (page = 1) => {
     const params = {
       page,
-      limit: 20,   // constant limit
+      limit: 20,
       search: searchQuery || undefined,
       category_id: selectedCategory || undefined,
       tags: selectedTags.length > 0 ? selectedTags.join(',') : undefined
@@ -119,20 +135,21 @@ const Home = () => {
     fetchProducts(newPage);
   }, [fetchProducts]);
 
+  // Handle back to home
+  const handleBackToHome = () => {
+    navigate('/');
+  };
+
   if (loading) {
     return (
-      <div className="home-page">
-        <div className="hero">
-          <div className="container">
-            <h1>Fresh Groceries Delivered</h1>
-            <p>Find the best quality products at competitive prices</p>
-            <div className="hero-search">
-              <SearchBar onSearch={handleSearch} />
-            </div>
+      <div className="category-page">
+        <div className="container">
+          <div className="page-header">
+            <button onClick={handleBackToHome} className="back-link">
+              ← Back to Home
+            </button>
+            <h1>Loading...</h1>
           </div>
-        </div>
-
-        <div className="container main-content">
           <div className="loading-container">
             <div className="loading-spinner"></div>
             <p>Loading products...</p>
@@ -143,18 +160,16 @@ const Home = () => {
   }
 
   return (
-    <div className="home-page">
-      <div className="hero">
-        <div className="container">
-          <h1>Fresh Groceries Delivered</h1>
-          <p>Find the best quality products at competitive prices</p>
-          <div className="hero-search">
-            <SearchBar onSearch={handleSearch} />
-          </div>
+    <div className="category-page">
+      <div className="container">
+        <div className="page-header">
+          <button onClick={handleBackToHome} className="back-link">
+            ← Back to Home
+          </button>
+          <h1>{categoryInfo?.name || 'Category Products'}</h1>
+          <p>{categoryInfo?.description || 'Browse products in this category'}</p>
         </div>
-      </div>
 
-      <div className="container main-content">
         <div className="row">
           <div className="col-md-3">
             <div className="filters-card">
@@ -191,4 +206,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default CategoryPage;

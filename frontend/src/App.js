@@ -18,6 +18,7 @@ import Addresses from './pages/Addresses';
 import ProfileComplete from './pages/ProfileComplete';
 import InactiveRoute from './components/InactiveRoute';
 import Categories from './pages/Categories';
+import CategoryPage from './pages/CategoryPage';
 import Panel from './pages/Panel';
 import UserManagement from './pages/panel/UserManagement';
 import ProductManagement from './pages/panel/ProductManagement';
@@ -73,7 +74,7 @@ function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
                 <Route path="/categories" element={<Categories />} />
-                <Route path="/categories/:id" element={<Home />} />
+                <Route path="/categories/:id" element={<CategoryPage />} />
                 
                 {/* Protected Routes */}
                 <Route path="/cart" element={
