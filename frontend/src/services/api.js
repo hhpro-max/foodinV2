@@ -60,7 +60,17 @@ api.interceptors.response.use(
 // Product APIs
 export const getProducts = async (params = {}) => {
   const response = await api.get('/products', { params });
-  return response.data;
+  const data = response.data;
+  
+  // The backend already returns { data: { products, pagination } }
+  return {
+    products: data?.data?.products || [],
+    pagination: data?.data?.pagination || {
+      page: 1,
+      limit: 20,
+      total: 0
+    }
+  };
 };
 
 export const createProduct = async (formData) => {

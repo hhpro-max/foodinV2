@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState('');
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      onSearch(query);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [query, onSearch]);
+
   const handleChange = (e) => {
     const value = e.target.value;
     setQuery(value);
-    onSearch(value);
   };
 
   return (

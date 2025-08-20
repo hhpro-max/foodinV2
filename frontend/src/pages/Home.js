@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { debounce } from '../utils/debounce';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import SearchBar from '../components/SearchBar';
 import CategoryFilter from '../components/CategoryFilter';
 import TagCloud from '../components/TagCloud';
@@ -20,46 +19,18 @@ const Home = () => {
   const fetchProducts = useCallback(async (page = 1) => {
     const params = {
       page,
-      limit: pagination.limit,
-      search: searchQuery,
-      category_id: selectedCategory,
-      tags: selectedTags.join(',')
+      limit: 20,   // constant limit
+      search: searchQuery || undefined,
+      category_id: selectedCategory || undefined,
+      tags: selectedTags.length > 0 ? selectedTags.join(',') : undefined
     };
 
     console.log('Fetching products with params:', params);
 
     try {
-      const response = await getProducts(params);
-      console.log('API service response:', response);
-      console.log('API service response structure:', {
-        hasProducts: !!response.products,
-        productsLength: response.products?.length,
-        productsType: typeof response.products,
-        hasPagination: !!response.pagination,
-        responseKeys: Object.keys(response),
-        fullResponse: JSON.stringify(response, null, 2)
-      });
-      
-      // Check if response has the expected structure
-      let productsData, paginationData;
-      
-      if (response.products) {
-        // Direct access
-        productsData = response.products;
-        paginationData = response.pagination;
-      } else if (response.data && response.data.products) {
-        // Nested access
-        productsData = response.data.products;
-        paginationData = response.data.pagination;
-      } else {
-        // Fallback - check if response itself is the data
-        productsData = Array.isArray(response) ? response : [];
-        paginationData = { page: 1, limit: 20, total: 0 };
-      }
-      
-      console.log('Final products data:', productsData);
-      console.log('Final pagination data:', paginationData);
-      console.log('Products array length:', productsData.length);
+      const { products: productsData, pagination: paginationData } = await getProducts(params);
+      console.log('API response products:', productsData);
+      console.log('API response pagination:', paginationData);
       
       setProducts(productsData);
       setPagination(paginationData);
@@ -74,7 +45,7 @@ const Home = () => {
       console.error('Error status:', error.response?.status);
       console.error('Error message:', error.message);
     }
-  }, [searchQuery, selectedCategory, selectedTags, pagination.limit]);
+  }, [searchQuery, selectedCategory, selectedTags]);
 
   // Fetch categories once on mount
   useEffect(() => {
@@ -105,23 +76,25 @@ const Home = () => {
     fetchCategoriesOnly();
   }, []);
 
-  // Fetch products on mount and whenever fetchProducts changes (filters/search update it)
+  // Fetch products on mount and when filters change
   const isInitialLoad = useRef(true);
   useEffect(() => {
-    if (isInitialLoad.current) setLoading(true);
+    setLoading(true);
     fetchProducts(1).finally(() => {
       if (isInitialLoad.current) {
-        setLoading(false);
         isInitialLoad.current = false;
       }
+      setLoading(false);
     });
-  }, [fetchProducts]);
+  }, [searchQuery, selectedCategory, selectedTags]);
 
-  // Handle search with debouncing
-  const debouncedSetSearch = useMemo(() => debounce((query) => setSearchQuery(query), 500), [setSearchQuery]);
+  // Handle search
   const handleSearch = useCallback((query) => {
-    debouncedSetSearch(query);
-  }, [debouncedSetSearch]);
+    setSearchQuery(query);
+    if (query) {
+      setSelectedCategory(null); // Reset category when searching
+    }
+  }, []);
 
   // Handle category selection
   const handleCategorySelect = useCallback((categoryId) => {

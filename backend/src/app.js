@@ -50,7 +50,6 @@ const categoryRoutes = require('./routes/category.routes');
 const imageRoutes = require('./routes/image.routes');
 
 const app = express();
-/*
 // Security middleware
 app.use(helmet());
 
@@ -59,13 +58,6 @@ app.use(cors({
   origin: process.env.FRONTEND_URL || ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
 }));
-*/
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false, // disable CORP
-    contentSecurityPolicy: false,     // disable CSP
-  })
-);
 
 // Logging middleware
 if (process.env.NODE_ENV === 'development') {
