@@ -41,7 +41,7 @@ const MyProducts = () => {
       setTotalPages(res.data.pagination?.totalPages || 1);
       setCurrentPage(page);
     } catch (error) {
-      toast.error('Failed to fetch your products.');
+      toast.error('بارگذاری محصولات شما با خطا مواجه شد.');
       console.error(error);
     } finally {
       setLoading(false);
@@ -143,60 +143,60 @@ const MyProducts = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">در حال بارگذاری...</div>;
   }
 
   return (
     <div className="panel-content-wrapper">
       <div className="panel-header">
-        <h2>My Products</h2>
+        <h2>محصولات من</h2>
         <button
           className="action-button edit-button"
           onClick={() => navigate('/panel/products/create')}
         >
-          Create Product
+          ایجاد محصول
         </button>
       </div>
 
       <div className="panel-filters">
         <form onSubmit={handleFilterSubmit} className="filter-form">
           <div className="filter-group">
-            <label htmlFor="search">Search:</label>
+            <label htmlFor="search">جستجو:</label>
             <input
               type="text"
               id="search"
               name="search"
               value={filters.search}
               onChange={handleFilterChange}
-              placeholder="Product name..."
+              placeholder="نام محصول..."
             />
           </div>
           
           <div className="filter-group">
-            <label htmlFor="status">Status:</label>
+            <label htmlFor="status">وضعیت:</label>
             <select
               id="status"
               name="status"
               value={filters.status}
               onChange={handleFilterChange}
             >
-              <option value="">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
+              <option value="">همه وضعیت‌ها</option>
+              <option value="pending">در انتظار</option>
+              <option value="approved">تایید شده</option>
+              <option value="rejected">رد شده</option>
             </select>
           </div>
           
           <div className="filter-actions">
             <button type="submit" className="action-button edit-button">
-              Apply Filters
+              اعمال فیلترها
             </button>
             <button
               type="button"
               className="action-button"
               onClick={handleResetFilters}
             >
-              Reset
+              بازنشانی
             </button>
           </div>
         </form>
@@ -204,19 +204,19 @@ const MyProducts = () => {
 
       {products.length === 0 ? (
         <div className="no-data">
-          <p>No products found.</p>
+          <p>هیچ محصولی یافت نشد.</p>
         </div>
       ) : (
         <>
           <table className="panel-table">
             <thead>
               <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Actions</th>
+                <th>تصویر</th>
+                <th>نام</th>
+                <th>وضعیت</th>
+                <th>قیمت</th>
+                <th>موجودی</th>
+                <th>اقدامات</th>
               </tr>
             </thead>
             <tbody>
@@ -244,7 +244,7 @@ const MyProducts = () => {
                   <td>{product.name}</td>
                   <td>
                     <span className={getStatusBadgeClass(product.status)}>
-                      {product.status}
+                      {product.status === 'approved' ? 'تایید شده' : product.status === 'pending' ? 'در انتظار' : 'رد شده'}
                     </span>
                   </td>
                   <td>{product.salePrice ? `$${product.salePrice.toFixed(2)}` : 'N/A'}</td>
@@ -255,19 +255,19 @@ const MyProducts = () => {
                         className="action-button edit-button"
                         onClick={() => handleEditProduct(product.id)}
                       >
-                        Edit
+                        ویرایش
                       </button>
                       <button
                         className="action-button stock-button"
                         onClick={() => handleUpdateStock(product.id)}
                       >
-                        Stock
+                        موجودی
                       </button>
                       <button
                         className="action-button deactivate-button"
                         onClick={() => handleDeleteProduct(product.id)}
                       >
-                        Delete
+                        حذف
                       </button>
                     </div>
                   </td>
@@ -283,11 +283,11 @@ const MyProducts = () => {
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
               >
-                Previous
+                قبلی
               </button>
               
               <span className="pagination-info">
-                Page {currentPage} of {totalPages}
+                صفحه {currentPage} از {totalPages}
               </span>
               
               <button
@@ -295,7 +295,7 @@ const MyProducts = () => {
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
               >
-                Next
+                بعدی
               </button>
             </div>
           )}

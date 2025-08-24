@@ -90,7 +90,7 @@ const Invoices = () => {
       }
     } catch (error) {
       console.error('Failed to fetch invoice details:', error);
-      toast.error('Failed to fetch invoice details');
+      toast.error('خطا در دریافت جزئیات فاکتور');
     } finally {
       setDetailLoading(false);
     }
@@ -109,16 +109,16 @@ const Invoices = () => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.success('PDF downloaded successfully');
+      toast.success('PDF با موفقیت دانلود شد');
     } catch (error) {
       console.error('Failed to download PDF:', error);
-      toast.error('Failed to download PDF');
+      toast.error('خطا در دانلود PDF');
     }
   };
 
   const handleConfirmSubmit = async () => {
     if (!deliveryCode || deliveryCode.length !== 6) {
-      setConfirmError('Please enter a valid 6-digit delivery code');
+      setConfirmError('لطفا یک کد تحویل 6 رقمی معتبر وارد کنید');
       return;
     }
 
@@ -143,7 +143,7 @@ const Invoices = () => {
       setConfirmError(null);
     } catch (err) {
       console.error('Failed to confirm delivery', err);
-      setConfirmError(err.response?.data?.message || 'Failed to confirm delivery');
+      setConfirmError(err.response?.data?.message || 'خطا در تایید تحویل');
     } finally {
       setConfirmLoading(false);
     }
@@ -163,7 +163,7 @@ const Invoices = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading invoices...</div>;
+    return <div className="loading">در حال بارگذاری فاکتورها...</div>;
   }
 
   if (error) {
@@ -173,23 +173,23 @@ const Invoices = () => {
   return (
     <div className="panel-content-wrapper">
       <div className="panel-header">
-        <h2>My Invoices</h2>
+        <h2>فاکتورهای من</h2>
       </div>
 
       {items.length === 0 ? (
-        <div className="no-data">No invoices found</div>
+        <div className="no-data">هیچ فاکتوری یافت نشد</div>
       ) : (
         <table className="panel-table">
           <thead>
             <tr>
-              <th>Invoice ID</th>
-              <th>Order ID</th>
-              <th>Total Amount</th>
-              <th>Status</th>
-              <th>Created At</th>
-              <th>Invoice Items</th>
-              <th>Delivery Code</th>
-              <th>Actions</th>
+              <th>شناسه فاکتور</th>
+              <th>شناسه سفارش</th>
+              <th>مبلغ کل</th>
+              <th>وضعیت</th>
+              <th>تاریخ ایجاد</th>
+              <th>آیتم‌های فاکتور</th>
+              <th>کد تحویل</th>
+              <th>اقدامات</th>
             </tr>
           </thead>
           <tbody>
@@ -200,7 +200,7 @@ const Invoices = () => {
                 <td>${invoice.totalAmount?.toFixed(2) || '0.00'}</td>
                 <td>
                   <span className={getStatusBadgeClass(invoice.status)}>
-                    {invoice.status || 'Unknown'}
+                    {invoice.status || 'ناشناخته'}
                   </span>
                 </td>
                 <td>{new Date(invoice.createdAt).toLocaleDateString()}</td>
@@ -209,22 +209,22 @@ const Invoices = () => {
                     <div>
                       {invoice.invoiceItems.map((item, index) => (
                         <div key={index} className="invoice-item">
-                          <div>Product ID: {item.productId}</div>
-                          <div>Quantity: {item.quantity}</div>
-                          <div>Unit Price: ${item.unitPrice?.toFixed(2) || '0.00'}</div>
-                          <div>Total Price: ${item.totalPrice?.toFixed(2) || '0.00'}</div>
+                          <div>شناسه محصول: {item.productId}</div>
+                          <div>تعداد: {item.quantity}</div>
+                          <div>قیمت واحد: ${item.unitPrice?.toFixed(2) || '0.00'}</div>
+                          <div>قیمت کل: ${item.totalPrice?.toFixed(2) || '0.00'}</div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div>No items</div>
+                    <div>هیچ آیتمی</div>
                   )}
                 </td>
                 <td>
                   {invoice.deliveryCode ? (
                     <span className="delivery-code-badge">{invoice.deliveryCode}</span>
                   ) : (
-                    <span className="no-code">No code</span>
+                    <span className="no-code">بدون کد</span>
                   )}
                 </td>
                 <td className="action-buttons">
@@ -232,14 +232,14 @@ const Invoices = () => {
                     className="action-button edit-button"
                     onClick={() => handleViewDeliveryInfo(invoice.id)}
                   >
-                    Delivery Info
+                    اطلاعات تحویل
                   </button>
                   <button
                     className="action-button view-button"
                     onClick={() => handleViewDetails(invoice)}
                     disabled={detailLoading}
                   >
-                    {detailLoading ? 'Loading...' : 'View Details'}
+                    {detailLoading ? 'در حال بارگذاری...' : 'مشاهده جزئیات'}
                   </button>
                   {invoice.deliveryCode ? (
                     <span className="delivery-code-display">{invoice.deliveryCode}</span>
@@ -249,7 +249,7 @@ const Invoices = () => {
                         className="action-button stock-button"
                         onClick={() => handleConfirmDelivery(invoice.id)}
                       >
-                        Confirm Delivery
+                        تایید تحویل
                       </button>
                     )
                   )}
@@ -264,29 +264,29 @@ const Invoices = () => {
       {showDeliveryModal && deliveryInfo && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Delivery Information</h3>
+            <h3>اطلاعات تحویل</h3>
             <div className="form-group">
-              <label>Delivery Address:</label>
+              <label>آدرس تحویل:</label>
               <p>{deliveryInfo.deliveryAddress || 'N/A'}</p>
             </div>
             <div className="form-group">
-              <label>Delivery Date Requested:</label>
+              <label>تاریخ درخواست تحویل:</label>
               <p>{deliveryInfo.deliveryDateRequested ? new Date(deliveryInfo.deliveryDateRequested).toLocaleDateString() : 'N/A'}</p>
             </div>
             <div className="form-group">
-              <label>Status:</label>
+              <label>وضعیت:</label>
               <p>{deliveryInfo.status || 'N/A'}</p>
             </div>
             <div className="form-group">
-              <label>Special Instructions:</label>
-              <p>{deliveryInfo.specialInstructions || 'None'}</p>
+              <label>دستورالعمل‌های ویژه:</label>
+              <p>{deliveryInfo.specialInstructions || 'هیچ'}</p>
             </div>
             <div className="modal-actions">
               <button
                 className="action-button"
                 onClick={() => setShowDeliveryModal(false)}
               >
-                Close
+                بستن
               </button>
             </div>
           </div>
@@ -297,14 +297,14 @@ const Invoices = () => {
       {showConfirmModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Confirm Delivery</h3>
+            <h3>تایید تحویل</h3>
             <div className="form-group">
-              <label>Delivery Code:</label>
+              <label>کد تحویل:</label>
               <input
                 type="text"
                 value={deliveryCode}
                 onChange={(e) => setDeliveryCode(e.target.value)}
-                placeholder="Enter 6-digit code"
+                placeholder="کد 6 رقمی را وارد کنید"
                 maxLength="6"
                 className="form-control"
               />
@@ -320,14 +320,14 @@ const Invoices = () => {
                 onClick={() => setShowConfirmModal(false)}
                 disabled={confirmLoading}
               >
-                Cancel
+                انصراف
               </button>
               <button
                 className="action-button activate-button"
                 onClick={handleConfirmSubmit}
                 disabled={confirmLoading}
               >
-                {confirmLoading ? 'Confirming...' : 'Confirm Delivery'}
+                {confirmLoading ? 'در حال تایید...' : 'تایید تحویل'}
               </button>
             </div>
           </div>
@@ -339,7 +339,7 @@ const Invoices = () => {
         <div className="modal-overlay">
           <div className="modal-content invoice-detail-modal">
             <div className="modal-header">
-              <h3>Invoice Details</h3>
+              <h3>جزئیات فاکتور</h3>
               <button
                 className="close-button"
                 onClick={() => setShowDetailModal(false)}
@@ -349,36 +349,36 @@ const Invoices = () => {
             </div>
             
             {detailLoading ? (
-              <div className="loading">Loading details...</div>
+              <div className="loading">در حال بارگذاری جزئیات...</div>
             ) : (
               <>
                 <div className="invoice-info">
-                  <h4>Invoice Information</h4>
+                  <h4>اطلاعات فاکتور</h4>
                   <div className="info-grid">
                     <div className="info-item">
-                      <label>Invoice ID:</label>
+                      <label>شناسه فاکتور:</label>
                       <span>{selectedInvoice.id}</span>
                     </div>
                     <div className="info-item">
-                      <label>Order ID:</label>
+                      <label>شناسه سفارش:</label>
                       <span>{selectedInvoice.orderId || selectedInvoice.order_id}</span>
                     </div>
                     <div className="info-item">
-                      <label>Total Amount:</label>
+                      <label>مبلغ کل:</label>
                       <span>${selectedInvoice.totalAmount?.toFixed(2) || selectedInvoice.total_amount?.toFixed(2) || '0.00'}</span>
                     </div>
                     <div className="info-item">
-                      <label>Status:</label>
+                      <label>وضعیت:</label>
                       <span className={getStatusBadgeClass(selectedInvoice.status)}>
-                        {selectedInvoice.status || 'Unknown'}
+                        {selectedInvoice.status || 'ناشناخته'}
                       </span>
                     </div>
                     <div className="info-item">
-                      <label>Created At:</label>
+                      <label>تاریخ ایجاد:</label>
                       <span>{selectedInvoice.createdAt ? new Date(selectedInvoice.createdAt).toLocaleString() : 'N/A'}</span>
                     </div>
                     <div className="info-item">
-                      <label>Updated At:</label>
+                      <label>تاریخ به‌روزرسانی:</label>
                       <span>{selectedInvoice.updatedAt ? new Date(selectedInvoice.updatedAt).toLocaleString() : 'N/A'}</span>
                     </div>
                   </div>
@@ -386,34 +386,34 @@ const Invoices = () => {
 
                 {buyerDetails && (
                   <div className="party-info">
-                    <h4>Buyer Information</h4>
+                    <h4>اطلاعات خریدار</h4>
                     <div className="info-grid">
                       <div className="info-item">
-                        <label>ID:</label>
+                        <label>شناسه:</label>
                         <span>{buyerDetails.id}</span>
                       </div>
                       <div className="info-item">
-                        <label>Name:</label>
+                        <label>نام:</label>
                         <span>{buyerDetails.firstName && buyerDetails.lastName ?
                           `${buyerDetails.firstName} ${buyerDetails.lastName}` :
                           buyerDetails.name || 'N/A'}</span>
                       </div>
                       <div className="info-item">
-                        <label>Email:</label>
+                        <label>ایمیل:</label>
                         <span>{buyerDetails.email || 'N/A'}</span>
                       </div>
                       <div className="info-item">
-                        <label>Phone:</label>
+                        <label>تلفن:</label>
                         <span>{buyerDetails.phone || 'N/A'}</span>
                       </div>
                       <div className="info-item">
-                        <label>Customer Code:</label>
+                        <label>کد مشتری:</label>
                         <span>{buyerDetails.customerCode || 'N/A'}</span>
                       </div>
                     </div>
                     {buyerAddress && (
                       <div className="address-info">
-                        <h5>Buyer Address</h5>
+                        <h5>آدرس خریدار</h5>
                         <p>{buyerAddress.fullAddress || buyerAddress.full_address}</p>
                         <p>{buyerAddress.city}, {buyerAddress.postalCode || buyerAddress.postal_code}</p>
                       </div>
@@ -423,34 +423,34 @@ const Invoices = () => {
 
                 {sellerDetails && (
                   <div className="party-info">
-                    <h4>Seller Information</h4>
+                    <h4>اطلاعات فروشنده</h4>
                     <div className="info-grid">
                       <div className="info-item">
-                        <label>ID:</label>
+                        <label>شناسه:</label>
                         <span>{sellerDetails.id}</span>
                       </div>
                       <div className="info-item">
-                        <label>Name:</label>
+                        <label>نام:</label>
                         <span>{sellerDetails.firstName && sellerDetails.lastName ?
                           `${sellerDetails.firstName} ${sellerDetails.lastName}` :
                           sellerDetails.name || 'N/A'}</span>
                       </div>
                       <div className="info-item">
-                        <label>Email:</label>
+                        <label>ایمیل:</label>
                         <span>{sellerDetails.email || 'N/A'}</span>
                       </div>
                       <div className="info-item">
-                        <label>Phone:</label>
+                        <label>تلفن:</label>
                         <span>{sellerDetails.phone || 'N/A'}</span>
                       </div>
                       <div className="info-item">
-                        <label>Customer Code:</label>
+                        <label>کد مشتری:</label>
                         <span>{sellerDetails.customerCode || 'N/A'}</span>
                       </div>
                     </div>
                     {sellerAddress && (
                       <div className="address-info">
-                        <h5>Seller Address</h5>
+                        <h5>آدرس فروشنده</h5>
                         <p>{sellerAddress.fullAddress || sellerAddress.full_address}</p>
                         <p>{sellerAddress.city}, {sellerAddress.postalCode || sellerAddress.postal_code}</p>
                       </div>
@@ -463,13 +463,13 @@ const Invoices = () => {
                     className="action-button"
                     onClick={() => setShowDetailModal(false)}
                   >
-                    Close
+                    بستن
                   </button>
                   <button
                     className="action-button download-button"
                     onClick={handleDownloadPDF}
                   >
-                    Download PDF
+                    دانلود PDF
                   </button>
                 </div>
               </>

@@ -15,9 +15,9 @@ const Cart = () => {
       <div className="container">
         <div className="empty-cart">
           <FaShoppingBag />
-          <h2>Please login to view your cart</h2>
+          <h2>لطفا برای مشاهده سبد خرید وارد شوید</h2>
           <button className="btn btn-primary" onClick={() => navigate('/auth')}>
-            Login
+            ورود
           </button>
         </div>
       </div>
@@ -29,7 +29,7 @@ const Cart = () => {
       <div className="container">
         <div className="loading-container">
           <div className="loading-spinner"></div>
-          <p>Loading cart...</p>
+          <p>در حال بارگذاری سبد خرید...</p>
         </div>
       </div>
     );
@@ -40,10 +40,10 @@ const Cart = () => {
       <div className="container">
         <div className="empty-cart">
           <FaShoppingBag />
-          <h2>Your cart is empty</h2>
-          <p>Add some products to get started!</p>
+          <h2>سبد خرید شما خالی است</h2>
+          <p>برای شروع، چند محصول اضافه کنید!</p>
           <button className="btn btn-primary" onClick={() => navigate('/')}>
-            Continue Shopping
+            ادامه خرید
           </button>
         </div>
       </div>
@@ -90,9 +90,9 @@ const Cart = () => {
       <div className="container">
         <div className="cart-header">
           <button className="back-btn" onClick={() => navigate('/')}>
-            <FaArrowLeft /> Continue Shopping
+            <FaArrowLeft /> ادامه خرید
           </button>
-          <h1>Shopping Cart ({itemCount} items)</h1>
+          <h1>سبد خرید ({itemCount} مورد)</h1>
         </div>
 
         <div className="cart-content">
@@ -172,20 +172,20 @@ const Cart = () => {
 
           <div className="cart-summary">
             <div className="summary-card">
-              <h3>Order Summary</h3>
+              <h3>خلاصه سفارش</h3>
               
               <div className="summary-row">
-                <span>Subtotal ({itemCount} items)</span>
+                <span>جمع کل ({itemCount} مورد)</span>
                 <span>${cartTotal.toFixed(2)}</span>
               </div>
               
               <div className="summary-row">
-                <span>Delivery Fee</span>
+                <span>هزینه ارسال</span>
                 <span>Free</span>
               </div>
               
               <div className="summary-row total">
-                <span>Total</span>
+                <span>مجموع</span>
                 <span>${cartTotal.toFixed(2)}</span>
               </div>
 
@@ -194,14 +194,14 @@ const Cart = () => {
                   className="btn btn-primary btn-block"
                   onClick={handleCheckout}
                 >
-                  Proceed to Checkout
+                  ادامه به پرداخت
                 </button>
                 
                 <button 
                   className="btn btn-outline btn-block"
                   onClick={handleClearCart}
                 >
-                  Clear Cart
+                  خالی کردن سبد خرید
                 </button>
               </div>
             </div>

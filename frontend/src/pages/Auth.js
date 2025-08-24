@@ -54,7 +54,7 @@ const Auth = () => {
     const formattedPhone = formatIranianPhoneNumber(phone);
     
     if (!validateIranianPhoneNumber(formattedPhone)) {
-      toast.error('Please enter a valid Iranian phone number');
+      toast.error('لطفا یک شماره تلفن معتبر ایرانی وارد کنید');
       return;
     }
 
@@ -64,9 +64,9 @@ const Auth = () => {
       setIsOtpSent(true);
   setOtpDigits(['', '', '', '', '', '']);
       setCountdown(120); // 2 minutes countdown
-      toast.success('OTP sent successfully!');
+      toast.success('کد OTP با موفقیت ارسال شد!');
     } catch (error) {
-      toast.error(error.message || 'Failed to send OTP');
+      toast.error(error.message || 'ارسال OTP با خطا مواجه شد');
     } finally {
       setLoading(false);
     }
@@ -76,7 +76,7 @@ const Auth = () => {
     e.preventDefault();
     const combined = otpDigits.join('');
     if (!combined || combined.length !== 6 || !/^\d+$/.test(combined)) {
-      toast.error('Please enter a valid 6-digit OTP');
+      toast.error('لطفا یک کد OTP 6 رقمی معتبر وارد کنید');
       return;
     }
 
@@ -94,7 +94,7 @@ const Auth = () => {
         throw new Error(result.error || 'Login failed');
       }
     } catch (error) {
-      toast.error(error.message || 'Invalid OTP');
+      toast.error(error.message || 'کد OTP نامعتبر است');
     } finally {
       setLoading(false);
     }
@@ -117,12 +117,12 @@ const Auth = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-side">
-          <h2>Fast B2B Ordering</h2>
-          <p>Order ingredients from verified sellers. Bulk pricing, reliable delivery, and easy reordering.</p>
+          <h2>سفارش‌دهی سریع B2B</h2>
+          <p>مواد اولیه را از فروشندگان تأیید شده سفارش دهید. قیمت‌های عمده، تحویل مطمئن و سفارش‌دهی آسان.</p>
           <ul>
-            <li>Trusted suppliers</li>
-            <li>Transparent pricing</li>
-            <li>Fast delivery</li>
+            <li>تأمین‌کنندگان معتبر</li>
+            <li>قیمت‌گذاری شفاف</li>
+            <li>تحویل سریع</li>
           </ul>
         </div>
 
@@ -131,22 +131,22 @@ const Auth = () => {
             <img src="/logo192.png" alt="Foodin Logo" className="auth-logo-img" />
             <div>
               <h3 style={{margin:0}}>Foodin</h3>
-              <small style={{color:'var(--gray-500)'}}>Fresh Groceries Delivered</small>
+              <small style={{color:'var(--gray-500)'}}>تازه‌جات و مواد غذایی تحویل داده شده</small>
             </div>
           </div>
 
-          <h2>Welcome to Foodin</h2>
+          <h2>به فودین خوش آمدید</h2>
           <p className="auth-subtitle">
             {isOtpSent 
-              ? `Enter the OTP sent to ${phone}`
-              : 'Enter your phone number to continue'
+              ? `کد OTP ارسال شده به ${phone} را وارد کنید`
+              : 'شماره تلفن خود را برای ادامه وارد کنید'
             }
           </p>
 
           {!isOtpSent ? (
             <form onSubmit={handleSendOtp} className="auth-form">
               <div className="form-group">
-                <label htmlFor="phone">Phone Number</label>
+                <label htmlFor="phone">شماره تلفن</label>
                 <div className="phone-input-container">
                   <span className="country-code">+98</span>
                   <input
@@ -161,7 +161,7 @@ const Auth = () => {
                     autoComplete="tel"
                   />
                 </div>
-                <small className="input-hint">Enter your Iranian mobile number</small>
+                <small className="input-hint">شماره موبایل ایرانی خود را وارد کنید</small>
               </div>
               <div className="actions">
                 <button 
@@ -169,14 +169,14 @@ const Auth = () => {
                   className="btn-primary"
                   disabled={loading}
                 >
-                  {loading ? 'Sending...' : 'Send OTP'}
+                  {loading ? 'در حال ارسال...' : 'ارسال کد OTP'}
                 </button>
               </div>
             </form>
           ) : (
             <form onSubmit={handleVerifyOtp} className="auth-form">
               <div className="form-group">
-                <label htmlFor="otp">Verification Code</label>
+                <label htmlFor="otp">کد تأیید</label>
                 <div className="otp-boxes">
                   {otpDigits.map((d, i) => (
                     <div className="otp-digit" key={i}>
@@ -212,7 +212,7 @@ const Auth = () => {
                 </div>
                 <div className="countdown-timer">
                   {countdown > 0 ? (
-                    <span>Resend code in {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}</span>
+                    <span>ارسال مجدد کد در {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}</span>
                   ) : (
                     <button 
                       type="button" 
@@ -220,7 +220,7 @@ const Auth = () => {
                       onClick={handleResendOtp}
                       disabled={loading}
                     >
-                      Resend Code
+                      ارسال مجدد کد
                     </button>
                   )}
                 </div>
@@ -231,7 +231,7 @@ const Auth = () => {
                   className="btn-primary"
                   disabled={loading}
                 >
-                  {loading ? 'Verifying...' : 'Verify OTP'}
+                  {loading ? 'در حال تأیید...' : 'تأیید کد OTP'}
                 </button>
                 <button 
                   type="button" 
@@ -244,7 +244,7 @@ const Auth = () => {
                   }}
                   disabled={loading}
                 >
-                  Change Phone Number
+                  تغییر شماره تلفن
                 </button>
               </div>
             </form>

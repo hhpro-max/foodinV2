@@ -40,8 +40,8 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="container">
         <Link to="/" className="navbar-brand">
-          <span className="brand-text">Foodin</span>
-          <span className="brand-tagline">Fresh Groceries Delivered</span>
+          <span className="brand-text">فودین</span>
+          <span className="brand-tagline">تازه‌جات و مواد غذایی تحویل داده شده</span>
         </Link>
 
         {/* Mobile menu button */}
@@ -53,12 +53,12 @@ const Navbar = () => {
         <ul className={`navbar-nav ${isMenuOpen ? 'active' : ''}`}>
           <li className="nav-item">
             <Link to="/" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-              Home
+              خانه
             </Link>
           </li>
           <li className="nav-item">
             <Link to="/categories" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-              Categories
+              دسته‌بندی‌ها
             </Link>
           </li>
           
@@ -67,7 +67,7 @@ const Navbar = () => {
             <button className="nav-link cart-link" onClick={handleCartClick}>
               <FaShoppingCart />
               <span className="cart-count">{getCartItemCount()}</span>
-              <span className="cart-text">Cart</span>
+              <span className="cart-text">سبد خرید</span>
             </button>
           </li>
 
@@ -75,7 +75,7 @@ const Navbar = () => {
             <>
               <li className="nav-item">
                 <Link to="/panel" className="nav-link panel-link" onClick={() => setIsMenuOpen(false)}>
-                  Panel
+                  پنل
                 </Link>
               </li>
               <li className="nav-item user-menu-container">
@@ -86,13 +86,13 @@ const Navbar = () => {
                 {isUserMenuOpen && (
                   <div className="user-menu">
                     <Link to="/profile" className="user-menu-item" onClick={() => setIsUserMenuOpen(false)}>
-                      <FaUser /> Profile
+                      <FaUser /> پروفایل
                     </Link>
                     <Link to="/addresses" className="user-menu-item" onClick={() => setIsUserMenuOpen(false)}>
-                      Addresses
+                      آدرس‌ها
                     </Link>
                     <button className="user-menu-item logout-btn" onClick={handleLogout}>
-                      <FaSignOutAlt /> Logout
+                      <FaSignOutAlt /> خروج
                     </button>
                   </div>
                 )}
@@ -101,7 +101,7 @@ const Navbar = () => {
           ) : (
             <li className="nav-item">
               <Link to="/auth" className="nav-link login-btn" onClick={() => setIsMenuOpen(false)}>
-                Login/Register
+                ورود/ثبت‌نام
               </Link>
             </li>
           )}

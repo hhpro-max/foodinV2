@@ -14,7 +14,7 @@ const UserManagement = () => {
       const res = await getUsers();
       setUsers(res.data.users || []);
     } catch (error) {
-      toast.error('Failed to fetch users.');
+      toast.error('بارگذاری کاربران با خطا مواجه شد.');
       console.error(error);
     } finally {
       setLoading(false);
@@ -26,7 +26,7 @@ const UserManagement = () => {
       const res = await getRoles();
       setRoles(res.data.roles || []);
     } catch (error) {
-      toast.error('Failed to fetch roles.');
+      toast.error('بارگذاری نقش‌ها با خطا مواجه شد.');
       console.error(error);
     }
   };
@@ -39,10 +39,10 @@ const UserManagement = () => {
   const handleStatusChange = async (userId, isActive) => {
     try {
       await updateUserStatus(userId, isActive);
-      toast.success(`User ${isActive ? 'activated' : 'deactivated'} successfully.`);
+      toast.success(`کاربر با موفقیت ${isActive ? 'فعال' : 'غیرفعال'} شد.`);
       fetchUsers();
     } catch (error) {
-      toast.error('Failed to update user status.');
+      toast.error('به‌روزرسانی وضعیت کاربر با خطا مواجه شد.');
       console.error(error);
     }
   };
@@ -50,10 +50,10 @@ const UserManagement = () => {
   const handleRoleChange = async (userId, roleId) => {
     try {
       await assignUserRole(userId, roleId);
-      toast.success('User role updated successfully.');
+      toast.success('نقش کاربر با موفقیت به‌روزرسانی شد.');
       fetchUsers();
     } catch (error) {
-      toast.error('Failed to update user role.');
+      toast.error('به‌روزرسانی نقش کاربر با خطا مواجه شد.');
       console.error(error);
     }
   };
@@ -65,23 +65,23 @@ const UserManagement = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>در حال بارگذاری...</div>;
   }
 
   return (
     <div>
-      <h2>User Management</h2>
+      <h2>مدیریت کاربران</h2>
       <table className="panel-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Phone</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Customer Code</th>
-            <th>Status</th>
-            <th>Roles</th>
-            <th>Actions</th>
+            <th>شناسه</th>
+            <th>تلفن</th>
+            <th>نام</th>
+            <th>ایمیل</th>
+            <th>کد مشتری</th>
+            <th>وضعیت</th>
+            <th>نقش‌ها</th>
+            <th>اقدامات</th>
           </tr>
         </thead>
         <tbody>
@@ -96,33 +96,33 @@ const UserManagement = () => {
               <td>{user.profile ? user.profile.customerCode || 'N/A' : 'N/A'}</td>
               <td>
                 <span className={`status-badge ${user.isActive ? 'active' : 'inactive'}`}>
-                  {user.isActive ? 'Active' : 'Inactive'}
+                  {user.isActive ? 'فعال' : 'غیرفعال'}
                 </span>
               </td>
               <td>
                 {user.roles && Array.isArray(user.roles)
                   ? user.roles.map(role => role.name).join(', ')
-                  : 'No roles'}
+                  : 'بدون نقش'}
               </td>
               <td>
                 <button
                   onClick={() => handleEditUser(user.id)}
                   className="action-button edit-button"
                 >
-                  Edit
+                  ویرایش
                 </button>
                 <button
                   onClick={() => handleStatusChange(user.id, !user.isActive)}
                   className={`action-button ${user.isActive ? 'deactivate-button' : 'activate-button'}`}
                 >
-                  {user.isActive ? 'Deactivate' : 'Activate'}
+                  {user.isActive ? 'غیرفعال‌سازی' : 'فعال‌سازی'}
                 </button>
                 <select
                   onChange={(e) => handleRoleChange(user.id, e.target.value)}
                   defaultValue=""
                   className="role-select"
                 >
-                  <option value="" disabled>Change Role</option>
+                  <option value="" disabled>تغییر نقش</option>
                   {roles.map(role => (
                     <option key={role.id} value={role.id}>
                       {role.name}

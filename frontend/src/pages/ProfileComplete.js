@@ -43,13 +43,13 @@ const ProfileComplete = () => {
   };
 
   const validate = () => {
-  if (!form.role) return 'Please select a role';
-    if (!form.first_name || !form.last_name) return 'First and last name are required';
+  if (!form.role) return 'لطفا نقش خود را انتخاب کنید';
+  if (!form.first_name || !form.last_name) return 'نام و نام خانوادگی الزامی است';
     if (form.user_type === 'natural') {
-      if (!form.national_id) return 'National ID is required';
-  if (!/^\d{10}$/.test(form.national_id)) return 'National ID must be 10 digits';
+      if (!form.national_id) return 'کد ملی الزامی است';
+      if (!/^\d{10}$/.test(form.national_id)) return 'کد ملی باید 10 رقم باشد';
     }
-    if (form.user_type === 'legal' && form.economic_code && !/^\d{8,12}$/.test(form.economic_code)) return 'Economic code must be numeric (8-12 digits)';
+    if (form.user_type === 'legal' && form.economic_code && !/^\d{8,12}$/.test(form.economic_code)) return 'کد اقتصادی باید عددی باشد (8-12 رقم)';
     return null;
   };
 
@@ -68,7 +68,7 @@ const ProfileComplete = () => {
 
   setFieldErrors({});
   const resp = await completeProfile(form);
-      toast.success('Profile completed and activated');
+      toast.success('پروفایل تکمیل و فعال شد');
 
       // If backend returns updated user, update AuthContext
       const updatedUser = resp?.data?.user || resp?.user || null;
@@ -77,17 +77,17 @@ const ProfileComplete = () => {
       // Call chooseRole to assign buyer/seller role
       try {
         await chooseRole(form.role);
-        toast.success('Role selected');
+        toast.success('نقش انتخاب شد');
       } catch (roleErr) {
         // Non-fatal: show message but continue
         console.error('Failed to choose role:', roleErr);
-        toast.error(roleErr.response?.data?.message || 'Failed to select role');
+        toast.error(roleErr.response?.data?.message || 'انتخاب نقش با خطا مواجه شد');
       }
 
       navigate('/');
     } catch (err) {
       // Map server-side validation messages to fields when possible
-      const msg = err.response?.data?.message || err.message || 'Failed to complete profile';
+      const msg = err.response?.data?.message || err.message || 'تکمیل پروفایل با خطا مواجه شد';
       // heuristics: split on comma and try to detect field names
       const parts = String(msg).split(/[,;\n]+/).map(p => p.trim()).filter(Boolean);
       const errors = {};
@@ -113,10 +113,10 @@ const ProfileComplete = () => {
 
   return (
     <div className="profile-complete-container">
-      <h2>Complete your profile</h2>
+      <h2>پروفایل خود را تکمیل کنید</h2>
       <form className="profile-complete-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Role</label>
+          <label>نقش</label>
           <div className="role-options">
             <label className="role-option">
               <input
@@ -126,7 +126,7 @@ const ProfileComplete = () => {
                 checked={form.role === 'buyer'}
                 onChange={handleChange}
               />
-              Buyer
+              خریدار
             </label>
             <label className="role-option">
               <input
@@ -136,36 +136,36 @@ const ProfileComplete = () => {
                 checked={form.role === 'seller'}
                 onChange={handleChange}
               />
-              Seller
+              فروشنده
             </label>
           </div>
           {fieldErrors.role && <p className="field-error">{fieldErrors.role}</p>}
         </div>
         <div className="form-group">
-          <label>User Type</label>
+          <label>نوع کاربر</label>
           <select name="user_type" value={form.user_type} onChange={handleChange}>
-            <option value="natural">Natural Person</option>
-            <option value="legal">Legal Entity</option>
+            <option value="natural">شخص حقیقی</option>
+            <option value="legal">شخص حقوقی</option>
           </select>
         </div>
 
         <div className="form-group">
-          <label>First Name</label>
+          <label>نام</label>
           <input name="first_name" value={form.first_name} onChange={handleChange} required />
         </div>
         <div className="form-group">
-          <label>Last Name</label>
+          <label>نام خانوادگی</label>
           <input name="last_name" value={form.last_name} onChange={handleChange} required />
         </div>
 
         <div className="form-group">
-          <label>Email</label>
+          <label>ایمیل</label>
           <input name="email" type="email" value={form.email} onChange={handleChange} />
         </div>
 
         {form.user_type === 'natural' ? (
           <div className="form-group">
-            <label>National ID</label>
+            <label>کد ملی</label>
             <input name="national_id" value={form.national_id} onChange={handleChange} />
           </div>
         ) : (
@@ -179,7 +179,7 @@ const ProfileComplete = () => {
 
         <div className="actions">
           <button className="btn-primary" type="submit" disabled={loading}>
-            {loading ? 'Submitting...' : 'Complete Profile'}
+            {loading ? 'در حال ارسال...' : 'تکمیل پروفایل'}
           </button>
         </div>
       </form>

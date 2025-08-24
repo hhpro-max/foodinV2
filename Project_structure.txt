@@ -240,3 +240,50 @@ src/
 ---
 
 این ساختار به‌گونه‌ای طراحی شده که توسعه‌پذیر، تست‌پذیر و مقیاس‌پذیر باشد، و می‌تواند به‌عنوان پایه‌ای محکم برای پیاده‌سازی پروژه Foodin مورد استفاده قرار گیرد.
+
+
+till here i implemented above features 
+now we need several things 
+first i should implement endpoint that gives me pdf of invoice with revelat information -> it can be done in both frontend and backend 
+here i will write prompt helper :
+""""
+consider that the base of the project structure is as follow :
+
+Routes :
+
+all endpoints
+
+controllers:
+
+Handle HTTP request/response
+Perform input validation (through middleware)
+Integrate authentication/authorization middleware
+Call appropriate services
+Handle errors through middleware
+
+Services:
+
+Contain business logic
+Handle data manipulation
+Manage complex operations
+Use dependency injection for repositories and other services
+
+Repositories:
+
+Handle all direct model/database interactions
+Provide clean data access interfaces
+Encapsulate persistence logic
+Return properly mapped entities or data transfer objects
+Maintain consistency in data operations
+Follow repository pattern conventions
+
+validation :
+Handle schema and related stuff
+
+middleware :
+Handle permission and related stuff
+
+database : postgressql + sequilize
+
+documentatoin : swagger
+""""

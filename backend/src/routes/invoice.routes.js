@@ -1,8 +1,7 @@
 const express = require('express');
 const InvoiceController = require('../controllers/invoice.controller');
-const { validateRequest, validateParams } = require('../middlewares/validateRequest');
-const { orderId } = require('../validations/order.validation');
-const { invoiceId, createInvoice } = require('../validations/invoice.validation');
+const { validateRequest, validateParams, commonSchemas } = require('../middlewares/validateRequest');
+const { createInvoice } = require('../validations/invoice.validation');
 const { authenticate, checkPermission } = require('../middlewares/auth');
 
 const router = express.Router();
@@ -67,7 +66,7 @@ module.exports = (sequelize) => {
    *         description: Server error
    */
   router.patch('/:invoiceId/pay',
-    validateParams(invoiceId),
+    validateParams(commonSchemas.invoiceId),
     (req, res, next) => invoiceController.markInvoiceAsPaid(req, res, next)
   );
 
@@ -102,7 +101,7 @@ module.exports = (sequelize) => {
    *         description: Server error
    */
   router.get('/order/:orderId',
-    validateParams(orderId),
+    validateParams(commonSchemas.id),
     (req, res, next) => invoiceController.getInvoicesByOrderId(req, res, next)
   );
 
@@ -183,6 +182,40 @@ module.exports = (sequelize) => {
     authenticate,
     checkPermission('invoice.view_all'),
     (req, res, next) => invoiceController.getAllInvoices(req, res, next)
+  );
+
+  /**
+   * @swagger
+   * /invoices/{invoiceId}/pdf:
+   *   get:
+   *     summary: Generate and download PDF invoice
+   *     tags: [Invoices]
+   *     parameters:
+   *       - in: path
+   *         name: invoiceId
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: Invoice ID
+   *     responses:
+   *       200:
+   *         description: PDF invoice file
+   *         content:
+   *           application/pdf:
+   *             schema:
+   *               type: string
+   *               format: binary
+   *       400:
+   *         description: Validation error
+   *       404:
+   *         description: Invoice not found
+   *       500:
+   *         description: Server error
+   */
+  router.get('/:invoiceId/pdf',
+    validateParams(commonSchemas.invoiceId),
+    (req, res, next) => invoiceController.generateInvoicePDF(req, res, next)
   );
 
   return router;

@@ -23,40 +23,40 @@ const Profile = () => {
 	if (!user) {
 		return (
 			<div className="container">
-				<h2>Profile</h2>
-				<p>Please login to view your profile.</p>
-				<Link to="/auth" className="btn btn-primary">Login</Link>
+				<h2>پروفایل</h2>
+				<p>لطفا برای مشاهده پروفایل وارد شوید.</p>
+				<Link to="/auth" className="btn btn-primary">ورود</Link>
 			</div>
 		);
 	}
 
 	return (
 		<div className="container profile-page">
-				<h2>Your Profile</h2>
+				<h2>پروفایل شما</h2>
 
 				  <div className="profile-grid">
 					<div className="profile-card">
-					  <h3>Account</h3>
+					  <h3>حساب کاربری</h3>
 					  <p><strong>ID:</strong> {user.id} <button className="small-btn" onClick={() => { navigator.clipboard?.writeText(user.id); toast.success('Copied ID'); }}>Copy</button></p>
 					  <p><strong>Phone:</strong> {user.phone} <button className="small-btn" onClick={() => { navigator.clipboard?.writeText(user.phone); toast.success('Copied phone'); }}>Copy</button></p>
-					  <p><strong>Type:</strong> {user.userType || user.user_type || 'N/A'}</p>
-					  <p><strong>Active:</strong> {user.isActive ? 'Yes' : 'No'}</p>
-					  <p><strong>Verified:</strong> {user.isVerified ? 'Yes' : 'No'}</p>
+					  <p><strong>نوع:</strong> {user.userType || user.user_type || 'N/A'}</p>
+					  <p><strong>فعال:</strong> {user.isActive ? 'بله' : 'خیر'}</p>
+					  <p><strong>تأیید شده:</strong> {user.isVerified ? 'بله' : 'خیر'}</p>
 					  <p><strong>Created:</strong> {user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A'}</p>
 					  <p><strong>Updated:</strong> {user.updatedAt ? new Date(user.updatedAt).toLocaleString() : 'N/A'}</p>
 					</div>
 
 							<div className="profile-card editable">
-								<h3>Profile</h3>
+								<h3>پروفایل</h3>
 								<div className="row">
-									<label>First name</label>
+									<label>نام</label>
 									{editing.first_name ? (
 										<div className="edit-row">
 											<input value={form.first_name} onChange={e => setForm({...form, first_name: e.target.value})} />
 											<button className="small-btn" onClick={async () => {
 												try {
 													const resp = await updateUserProfile({ first_name: form.first_name });
-													toast.success('First name updated');
+													toast.success('نام به‌روزرسانی شد');
 													updateUser(resp?.data?.user || resp?.user || resp);
 													setEditing({...editing, first_name: false});
 												} catch (err) { toast.error(err.response?.data?.message || 'Update failed'); }
@@ -72,14 +72,14 @@ const Profile = () => {
 								</div>
 
 								<div className="row">
-									<label>Last name</label>
+									<label>نام خانوادگی</label>
 									{editing.last_name ? (
 										<div className="edit-row">
 											<input value={form.last_name} onChange={e => setForm({...form, last_name: e.target.value})} />
 											<button className="small-btn" onClick={async () => {
 												try {
 													const resp = await updateUserProfile({ last_name: form.last_name });
-													toast.success('Last name updated');
+													toast.success('نام خانوادگی به‌روزرسانی شد');
 													updateUser(resp?.data?.user || resp?.user || resp);
 													setEditing({...editing, last_name: false});
 												} catch (err) { toast.error(err.response?.data?.message || 'Update failed'); }
@@ -95,14 +95,14 @@ const Profile = () => {
 								</div>
 
 								<div className="row">
-									<label>Email</label>
+									<label>ایمیل</label>
 									{editing.email ? (
 										<div className="edit-row">
 											<input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
 											<button className="small-btn" onClick={async () => {
 												try {
 													const resp = await updateUserProfile({ email: form.email });
-													toast.success('Email updated');
+													toast.success('ایمیل به‌روزرسانی شد');
 													updateUser(resp?.data?.user || resp?.user || resp);
 													setEditing({...editing, email: false});
 												} catch (err) { toast.error(err.response?.data?.message || 'Update failed'); }
@@ -121,19 +121,19 @@ const Profile = () => {
 							</div>
 
 							<div className="profile-card editable">
-								<h3>Natural Person</h3>
+								<h3>شخص حقیقی</h3>
 								{user.naturalPerson ? (
 									<>
 										<p><strong>ID:</strong> {user.naturalPerson.id} <button className="small-btn" onClick={() => { navigator.clipboard?.writeText(user.naturalPerson.id); toast.success('Copied ID'); }}>Copy</button></p>
 										<div className="row">
-											<label>National ID</label>
+											<label>کد ملی</label>
 											{editing.national_id ? (
 												<div className="edit-row">
 													<input value={form.national_id} onChange={e => setForm({...form, national_id: e.target.value})} />
 													<button className="small-btn" onClick={async () => {
 														try {
 															const resp = await updateUserProfile({ national_id: form.national_id });
-															toast.success('National ID updated');
+															toast.success('کد ملی به‌روزرسانی شد');
 															updateUser(resp?.data?.user || resp?.user || resp);
 															setEditing({...editing, national_id: false});
 														} catch (err) { toast.error(err.response?.data?.message || 'Update failed'); }
@@ -155,19 +155,19 @@ const Profile = () => {
 							</div>
 
 							<div className="profile-card editable">
-								<h3>Legal Person</h3>
+								<h3>شخص حقوقی</h3>
 								{user.legalPerson ? (
 									<>
 										<p><strong>ID:</strong> {user.legalPerson.id} <button className="small-btn" onClick={() => { navigator.clipboard?.writeText(user.legalPerson.id); toast.success('Copied ID'); }}>Copy</button></p>
 										<div className="row">
-											<label>Economic Code</label>
+											<label>کد اقتصادی</label>
 											{editing.economic_code ? (
 												<div className="edit-row">
 													<input value={form.economic_code} onChange={e => setForm({...form, economic_code: e.target.value})} />
 													<button className="small-btn" onClick={async () => {
 														try {
 															const resp = await updateUserProfile({ economic_code: form.economic_code });
-															toast.success('Economic code updated');
+															toast.success('کد اقتصادی به‌روزرسانی شد');
 															updateUser(resp?.data?.user || resp?.user || resp);
 															setEditing({...editing, economic_code: false});
 														} catch (err) { toast.error(err.response?.data?.message || 'Update failed'); }
@@ -183,14 +183,14 @@ const Profile = () => {
 										</div>
 
 										<div className="row">
-											<label>Company Name</label>
+											<label>نام شرکت</label>
 											{editing.company_name ? (
 												<div className="edit-row">
 													<input value={form.company_name} onChange={e => setForm({...form, company_name: e.target.value})} />
 													<button className="small-btn" onClick={async () => {
 														try {
 															const resp = await updateUserProfile({ company_name: form.company_name });
-															toast.success('Company name updated');
+															toast.success('نام شرکت به‌روزرسانی شد');
 															updateUser(resp?.data?.user || resp?.user || resp);
 															setEditing({...editing, company_name: false});
 														} catch (err) { toast.error(err.response?.data?.message || 'Update failed'); }

@@ -146,13 +146,13 @@ const CategoryPage = () => {
         <div className="container">
           <div className="page-header">
             <button onClick={handleBackToHome} className="back-link">
-              ← Back to Home
+              ← بازگشت به خانه
             </button>
-            <h1>Loading...</h1>
+            <h1>در حال بارگذاری...</h1>
           </div>
           <div className="loading-container">
             <div className="loading-spinner"></div>
-            <p>Loading products...</p>
+            <p>در حال بارگذاری محصولات...</p>
           </div>
         </div>
       </div>
@@ -164,7 +164,7 @@ const CategoryPage = () => {
       <div className="container">
         <div className="page-header">
           <button onClick={handleBackToHome} className="back-link">
-            ← Back to Home
+            ← بازگشت به خانه
           </button>
           <h1>{categoryInfo?.name || 'Category Products'}</h1>
           <p>{categoryInfo?.description || 'Browse products in this category'}</p>
@@ -173,7 +173,7 @@ const CategoryPage = () => {
         <div className="row">
           <div className="col-md-3">
             <div className="filters-card">
-              <h3>Filter Products</h3>
+              <h3>فیلتر محصولات</h3>
               <CategoryFilter
                 categories={categories}
                 selectedCategory={selectedCategory}
@@ -189,8 +189,8 @@ const CategoryPage = () => {
           <div className="col-md-9">
             {products.length === 0 ? (
               <div className="empty-products">
-                <h3>No products found</h3>
-                <p>Try adjusting your search or filters to find what you're looking for.</p>
+                <h3>هیچ محصولی یافت نشد</h3>
+                <p>برای پیدا کردن مورد نظر خود، جستجو یا فیلترها را تنظیم کنید.</p>
               </div>
             ) : (
               <ProductGrid

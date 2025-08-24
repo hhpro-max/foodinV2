@@ -15,7 +15,7 @@ const CategoryManagement = () => {
       const res = await getCategories();
       setCategories(res.data.categories || []);
     } catch (error) {
-      toast.error('Failed to fetch categories.');
+      toast.error('بارگذاری دسته‌بندی‌ها با خطا مواجه شد.');
       console.error(error);
     } finally {
       setLoading(false);
@@ -28,16 +28,16 @@ const CategoryManagement = () => {
 
   const handleCreate = async () => {
     if (!newCategoryName) {
-      toast.error('Category name is required.');
+      toast.error('نام دسته‌بندی الزامی است.');
       return;
     }
     try {
       await createCategory({ name: newCategoryName });
-      toast.success('Category created successfully.');
+      toast.success('دسته‌بندی با موفقیت ایجاد شد.');
       setNewCategoryName('');
       fetchCategories();
     } catch (error) {
-      toast.error('Failed to create category.');
+      toast.error('ایجاد دسته‌بندی با خطا مواجه شد.');
       console.error(error);
     }
   };
@@ -45,11 +45,11 @@ const CategoryManagement = () => {
   const handleUpdate = async (categoryId, name) => {
     try {
       await updateCategory(categoryId, { name });
-      toast.success('Category updated successfully.');
+      toast.success('دسته‌بندی با موفقیت به‌روزرسانی شد.');
       setEditingCategory(null);
       fetchCategories();
     } catch (error) {
-      toast.error('Failed to update category.');
+      toast.error('به‌روزرسانی دسته‌بندی با خطا مواجه شد.');
       console.error(error);
     }
   };
@@ -57,36 +57,36 @@ const CategoryManagement = () => {
   const handleDelete = async (categoryId) => {
     try {
       await deleteCategory(categoryId);
-      toast.success('Category deleted successfully.');
+      toast.success('دسته‌بندی با موفقیت حذف شد.');
       fetchCategories();
     } catch (error) {
-      toast.error('Failed to delete category.');
+      toast.error('حذف دسته‌بندی با خطا مواجه شد.');
       console.error(error);
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>در حال بارگذاری...</div>;
   }
 
   return (
     <div>
-      <h2>Category Management</h2>
+      <h2>مدیریت دسته‌بندی‌ها</h2>
       <div>
         <input
           type="text"
           value={newCategoryName}
           onChange={(e) => setNewCategoryName(e.target.value)}
-          placeholder="New category name"
+          placeholder="نام دسته‌بندی جدید"
         />
-        <button onClick={handleCreate}>Create</button>
+        <button onClick={handleCreate}>ایجاد</button>
       </div>
       <table className="panel-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Actions</th>
+            <th>شناسه</th>
+            <th>نام</th>
+            <th>اقدامات</th>
           </tr>
         </thead>
         <tbody>
@@ -105,8 +105,8 @@ const CategoryManagement = () => {
                 )}
               </td>
               <td>
-                <button onClick={() => setEditingCategory(category.id)}>Edit</button>
-                <button onClick={() => handleDelete(category.id)}>Delete</button>
+                <button onClick={() => setEditingCategory(category.id)}>ویرایش</button>
+                <button onClick={() => handleDelete(category.id)}>حذف</button>
               </td>
             </tr>
           ))}

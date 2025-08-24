@@ -61,6 +61,29 @@ class InvoiceController {
       next(error);
     }
   }
+
+  async generateInvoicePDF(req, res, next) {
+    try {
+      const { invoiceId } = req.params;
+      
+      // Check if PDF already exists
+      let filePath = this.invoiceService.getInvoicePDFPath(invoiceId);
+      
+      // If PDF doesn't exist, generate it
+      if (!filePath) {
+        filePath = await this.invoiceService.generateInvoicePDF(invoiceId);
+      }
+      
+      // Set headers for PDF download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=invoice-${invoiceId}.pdf`);
+      
+      // Send the PDF file
+      res.sendFile(filePath);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = InvoiceController;

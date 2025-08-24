@@ -19,7 +19,7 @@ const ProductManagement = () => {
       const res = await getPendingProducts();
       setProducts(res.data.products || []);
     } catch (error) {
-      toast.error('Failed to fetch pending products.');
+      toast.error('بارگذاری محصولات در انتظار با خطا مواجه شد.');
       console.error(error);
     } finally {
       setLoading(false);
@@ -80,31 +80,31 @@ const ProductManagement = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">در حال بارگذاری...</div>;
   }
 
   return (
     <div className="panel-content-wrapper">
       <div className="panel-header">
-        <h2>Pending Product Approvals</h2>
+        <h2>تایید محصولات در انتظار</h2>
       </div>
 
       {products.length === 0 ? (
         <div className="no-data">
-          <p>No pending products found.</p>
+          <p>هیچ محصول در انتظاری یافت نشد.</p>
         </div>
       ) : (
         <table className="panel-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Seller</th>
-              <th>Actions</th>
+              <th>شناسه</th>
+              <th>نام</th>
+              <th>توضیحات</th>
+              <th>دسته‌بندی</th>
+              <th>قیمت</th>
+              <th>موجودی</th>
+              <th>فروشنده</th>
+              <th>اقدامات</th>
             </tr>
           </thead>
           <tbody>
@@ -143,9 +143,9 @@ const ProductManagement = () => {
       {showApproveModal && currentProduct && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Approve Product: {currentProduct.name}</h3>
+            <h3>تایید محصول: {currentProduct.name}</h3>
             <div className="form-group">
-              <label htmlFor="sale_price">Sale Price ($):</label>
+              <label htmlFor="sale_price">قیمت فروش ($):</label>
               <input
                 type="number"
                 id="sale_price"
@@ -157,21 +157,21 @@ const ProductManagement = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="notes">Notes:</label>
+              <label htmlFor="notes">یادداشت‌ها:</label>
               <textarea
                 id="notes"
                 value={approvalData.notes}
                 onChange={(e) => setApprovalData({...approvalData, notes: e.target.value})}
                 rows="3"
-                placeholder="Optional approval notes"
+                placeholder="یادداشت‌های اختیاری تایید"
               />
             </div>
             <div className="modal-actions">
               <button className="action-button" onClick={closeModals}>
-                Cancel
+                انصراف
               </button>
               <button className="action-button edit-button" onClick={handleApprove}>
-                Approve
+                تایید
               </button>
             </div>
           </div>
@@ -182,28 +182,28 @@ const ProductManagement = () => {
       {showRejectModal && currentProduct && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Reject Product: {currentProduct.name}</h3>
+            <h3>رد محصول: {currentProduct.name}</h3>
             <div className="form-group">
-              <label htmlFor="rejection_note">Reason for Rejection:</label>
+              <label htmlFor="rejection_note">دلیل رد:</label>
               <textarea
                 id="rejection_note"
                 value={rejectionNote}
                 onChange={(e) => setRejectionNote(e.target.value)}
                 rows="3"
                 required
-                placeholder="Please specify the reason for rejection"
+                placeholder="لطفا دلیل رد محصول را مشخص کنید"
               />
             </div>
             <div className="modal-actions">
               <button className="action-button" onClick={closeModals}>
-                Cancel
+                انصراف
               </button>
               <button
                 className="action-button deactivate-button"
                 onClick={handleReject}
                 disabled={!rejectionNote.trim()}
               >
-                Reject
+                رد
               </button>
             </div>
           </div>

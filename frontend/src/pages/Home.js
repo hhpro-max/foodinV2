@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { debounce } from '../utils/debounce';
 import SearchBar from '../components/SearchBar';
 import CategoryFilter from '../components/CategoryFilter';
 import TagCloud from '../components/TagCloud';
@@ -7,7 +7,6 @@ import ProductGrid from '../components/ProductGrid';
 import { getProducts, getCategories } from '../services/api';
 
 const Home = () => {
-  const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
@@ -17,22 +16,83 @@ const Home = () => {
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0 });
   const [loading, setLoading] = useState(true);
 
+  // Fetch initial data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        console.log('Fetching initial data...');
+        
+        // Test if backend is reachable
+        try {
+          const testResponse = await fetch('http://localhost:3000/api/v1/products');
+          console.log('Backend test response status:', testResponse.status);
+          const testData = await testResponse.json();
+          console.log('Backend test data:', testData);
+        } catch (testError) {
+          console.error('Backend test failed:', testError);
+        }
+        
+        // Fetch categories
+        const categoriesResponse = await getCategories();
+        console.log('Categories response:', categoriesResponse);
+        setCategories(categoriesResponse.categories || []);
+
+        // Fetch products
+        await fetchProducts();
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   // Fetch products with current filters
-  const fetchProducts = useCallback(async (page = 1) => {
+  const fetchProducts = async (page = 1) => {
     const params = {
       page,
-      limit: 20,   // constant limit
-      search: searchQuery || undefined,
-      category_id: selectedCategory || undefined,
-      tags: selectedTags.length > 0 ? selectedTags.join(',') : undefined
+      limit: pagination.limit,
+      search: searchQuery,
+      category_id: selectedCategory,
+      tags: selectedTags.join(',')
     };
 
     console.log('Fetching products with params:', params);
 
     try {
-      const { products: productsData, pagination: paginationData } = await getProducts(params);
-      console.log('API response products:', productsData);
-      console.log('API response pagination:', paginationData);
+      // First, let's test with a direct fetch to see the exact response
+      const directResponse = await fetch('http://localhost:3000/api/v1/products');
+      const directData = await directResponse.json();
+      console.log('Direct fetch response:', directData);
+      console.log('Direct fetch data structure:', {
+        status: directData.status,
+        hasData: !!directData.data,
+        dataType: typeof directData.data,
+        hasProducts: !!directData.data?.products,
+        productsLength: directData.data?.products?.length,
+        productsType: typeof directData.data?.products
+      });
+
+      // Now try with our API service
+      const response = await getProducts(params);
+      console.log('API service response:', response);
+      console.log('API service response structure:', {
+        hasProducts: !!response.products,
+        productsLength: response.products?.length,
+        productsType: typeof response.products,
+        hasPagination: !!response.pagination
+      });
+      
+      // Fix: The API service already returns the data part, so access directly
+      const productsData = response.products || [];
+      const paginationData = response.pagination || { page: 1, limit: 20, total: 0 };
+      
+      console.log('Products data to set:', productsData);
+      console.log('Pagination data to set:', paginationData);
+      console.log('Products array length:', productsData.length);
       
       setProducts(productsData);
       setPagination(paginationData);
@@ -47,77 +107,34 @@ const Home = () => {
       console.error('Error status:', error.response?.status);
       console.error('Error message:', error.message);
     }
-  }, [searchQuery, selectedCategory, selectedTags]);
+  };
 
-  // Fetch categories once on mount
-  useEffect(() => {
-    const fetchCategoriesOnly = async () => {
-      try {
-        console.log('Fetching categories...');
-        const categoriesResponse = await getCategories();
-        console.log('Categories response:', categoriesResponse);
-
-        let catList = [];
-        if (Array.isArray(categoriesResponse)) {
-          catList = categoriesResponse;
-        } else if (Array.isArray(categoriesResponse.categories)) {
-          catList = categoriesResponse.categories;
-        } else if (categoriesResponse.data && Array.isArray(categoriesResponse.data.categories)) {
-          catList = categoriesResponse.data.categories;
-        } else {
-          const arr = Object.values(categoriesResponse).find((v) => Array.isArray(v));
-          if (Array.isArray(arr)) catList = arr;
-        }
-
-        setCategories(catList);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-
-    fetchCategoriesOnly();
-  }, []);
-
-  // Fetch products on mount and when filters change
-  const isInitialLoad = useRef(true);
-  useEffect(() => {
-    setLoading(true);
-    fetchProducts(1).finally(() => {
-      if (isInitialLoad.current) {
-        isInitialLoad.current = false;
-      }
-      setLoading(false);
-    });
-  }, [searchQuery, selectedCategory, selectedTags]);
-
-  // Handle search
-  const handleSearch = useCallback((query) => {
+  // Handle search with debouncing
+  const handleSearch = (query) => {
     setSearchQuery(query);
-    if (query) {
-      setSelectedCategory(null); // Reset category when searching
-    }
-  }, []);
+    fetchProducts(1);
+  };
 
   // Handle category selection
-  const handleCategorySelect = useCallback((categoryId) => {
+  const handleCategorySelect = (categoryId) => {
     setSelectedCategory(categoryId);
     setSelectedTags([]); // Reset tags when category changes
-  }, []);
+    fetchProducts(1);
+  };
 
   // Handle tag toggle
-  const handleToggleTag = useCallback((tagId) => {
-    setSelectedTags(prev => {
-      const newSelectedTags = prev.includes(tagId)
-        ? prev.filter(id => id !== tagId)
-        : [...prev, tagId];
-      return newSelectedTags;
-    });
-  }, []);
+  const handleToggleTag = (tagId) => {
+    const newSelectedTags = selectedTags.includes(tagId)
+      ? selectedTags.filter(id => id !== tagId)
+      : [...selectedTags, tagId];
+    setSelectedTags(newSelectedTags);
+    fetchProducts(1);
+  };
 
   // Handle page change
-  const handlePageChange = useCallback((newPage) => {
+  const handlePageChange = (newPage) => {
     fetchProducts(newPage);
-  }, [fetchProducts]);
+  };
 
   if (loading) {
     return (

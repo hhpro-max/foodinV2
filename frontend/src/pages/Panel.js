@@ -74,7 +74,7 @@ const Panel = () => {
         setPermissions(Array.isArray(payload) ? payload : []);
       } catch (err) {
         console.error('Failed to load permissions', err);
-        toast.error('Failed to load panel permissions');
+        toast.error('بارگذاری مجوزهای پنل با خطا مواجه شد');
       } finally {
         setLoading(false);
       }
@@ -99,14 +99,14 @@ const Panel = () => {
 
   // Desired display order and labels per your request
   const GROUPS_ORDER = [
-    { key: 'System', label: 'System management' },
-    { key: 'Reports', label: 'Report access' },
-    { key: 'Communications', label: 'Notification management' },
-    { key: 'Catalog', label: 'Category management' },
-    { key: 'Payments', label: 'Payment management' },
-    { key: 'Invoices', label: 'Invoice management' },
-    { key: 'Products', label: 'Product management' },
-    { key: 'Users', label: 'User management' },
+    { key: 'System', label: 'مدیریت سیستم' },
+    { key: 'Reports', label: 'دسترسی به گزارش‌ها' },
+    { key: 'Communications', label: 'مدیریت اعلان‌ها' },
+    { key: 'Catalog', label: 'مدیریت دسته‌بندی‌ها' },
+    { key: 'Payments', label: 'مدیریت پرداخت‌ها' },
+    { key: 'Invoices', label: 'مدیریت فاکتورها' },
+    { key: 'Products', label: 'مدیریت محصولات' },
+    { key: 'Users', label: 'مدیریت کاربران' },
   ];
 
   // include any other groups that exist but are not in the preferred order
@@ -126,11 +126,11 @@ const Panel = () => {
 
   return (
     <div className="container profile-page">
-      <h2>Panel</h2>
+      <h2>پنل</h2>
       <div className="panel-grid">
         <aside className="panel-sidebar profile-card">
-          <h4>Menu</h4>
-          {loading ? <p>Loading...</p> : (
+          <h4>منو</h4>
+          {loading ? <p>در حال بارگذاری...</p> : (
             <nav className="panel-nav">
                 {visibleGroupKeys.map(groupKey => {
                   const items = groupMap[groupKey] || [];

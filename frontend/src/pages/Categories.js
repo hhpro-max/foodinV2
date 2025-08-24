@@ -54,7 +54,7 @@ const Categories = () => {
       <div className="categories-page">
         <div className="container">
           <div className="page-header">
-            <h1>Categories</h1>
+            <h1>دسته‌بندی‌ها</h1>
           </div>
           <div className="categories-grid">
             {[...Array(8)].map((_, index) => (
@@ -75,22 +75,22 @@ const Categories = () => {
       <div className="container">
         <div className="page-header">
           <Link to="/" className="back-link">
-            <FaArrowLeft /> Back to Home
+            <FaArrowLeft /> بازگشت به خانه
           </Link>
-          <h1>All Categories</h1>
-          <p>Browse products by category</p>
+          <h1>همه دسته‌بندی‌ها</h1>
+          <p>محصولات را بر اساس دسته‌بندی مرور کنید</p>
         </div>
 
         {error ? (
           <div className="empty-categories">
-            <h3>Error loading categories</h3>
+            <h3>خطا در بارگذاری دسته‌بندی‌ها</h3>
             <p>{error}</p>
           </div>
         ) : categories.length === 0 ? (
           <div className="empty-categories">
             <FaShoppingBag />
-            <h3>No categories found</h3>
-            <p>There are no categories available at the moment.</p>
+            <h3>هیچ دسته‌بندی‌ای یافت نشد</h3>
+            <p>در حال حاضر دسته‌بندی‌ای در دسترس نیست.</p>
           </div>
         ) : (
           <div className="categories-grid">

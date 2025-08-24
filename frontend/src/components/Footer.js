@@ -8,8 +8,8 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-section">
-            <h3>Foodin</h3>
-            <p>Fresh groceries delivered to your doorstep. Quality products, competitive prices, and excellent service.</p>
+            <h3>فودین</h3>
+            <p>تازه‌جات و مواد غذایی درب منزل شما. محصولات باکیفیت، قیمت‌های رقابتی و خدمات عالی.</p>
             <div className="social-links">
               <a href="#" className="social-link"><FaFacebook /></a>
               <a href="#" className="social-link"><FaTwitter /></a>
@@ -19,31 +19,31 @@ const Footer = () => {
           </div>
 
           <div className="footer-section">
-            <h4>Quick Links</h4>
+            <h4>لینک‌های سریع</h4>
             <ul className="footer-links">
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/categories">Categories</Link></li>
-              <li><Link to="/products">Products</Link></li>
-              <li><Link to="/about">About Us</Link></li>
+              <li><Link to="/">خانه</Link></li>
+              <li><Link to="/categories">دسته‌بندی‌ها</Link></li>
+              <li><Link to="/products">محصولات</Link></li>
+              <li><Link to="/about">درباره ما</Link></li>
             </ul>
           </div>
 
           <div className="footer-section">
-            <h4>Customer Service</h4>
+            <h4>خدمات مشتریان</h4>
             <ul className="footer-links">
-              <li><Link to="/contact">Contact Us</Link></li>
-              <li><Link to="/help">Help Center</Link></li>
-              <li><Link to="/shipping">Shipping Info</Link></li>
-              <li><Link to="/returns">Returns</Link></li>
+              <li><Link to="/contact">تماس با ما</Link></li>
+              <li><Link to="/help">مرکز کمک</Link></li>
+              <li><Link to="/shipping">اطلاعات ارسال</Link></li>
+              <li><Link to="/returns">مرجوعی</Link></li>
             </ul>
           </div>
 
           <div className="footer-section">
-            <h4>Contact Info</h4>
+            <h4>اطلاعات تماس</h4>
             <div className="contact-info">
               <div className="contact-item">
                 <FaPhone />
-                <span>+1 (555) 123-4567</span>
+                <span>+98 21 123-45678</span>
               </div>
               <div className="contact-item">
                 <FaEnvelope />
@@ -51,7 +51,7 @@ const Footer = () => {
               </div>
               <div className="contact-item">
                 <FaMapMarkerAlt />
-                <span>123 Food Street, Grocery City, GC 12345</span>
+                <span>خیابان فودین، شهر مواد غذایی، کد پستی 12345</span>
               </div>
             </div>
           </div>
@@ -59,10 +59,10 @@ const Footer = () => {
 
         <div className="footer-bottom">
           <div className="footer-bottom-content">
-            <p>&copy; 2024 Foodin. All rights reserved.</p>
+            <p>&copy; 2024 فودین. تمامی حقوق محفوظ است.</p>
             <div className="footer-bottom-links">
-              <Link to="/privacy">Privacy Policy</Link>
-              <Link to="/terms">Terms of Service</Link>
+              <Link to="/privacy">سیاست حریم خصوصی</Link>
+              <Link to="/terms">شرایط استفاده</Link>
             </div>
           </div>
         </div>

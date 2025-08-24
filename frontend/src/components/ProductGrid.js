@@ -33,17 +33,17 @@ const ProductGrid = ({ products, pagination, onPageChange }) => {
             disabled={currentPage === 1}
             onClick={() => handlePageChange(currentPage - 1)}
           >
-            Previous
+            قبلی
           </button>
           
-          <span>Page {currentPage} of {totalPages}</span>
+          <span>صفحه {currentPage} از {totalPages}</span>
           
           <button 
             className="btn btn-outline-primary" 
             disabled={currentPage === totalPages}
             onClick={() => handlePageChange(currentPage + 1)}
           >
-            Next
+            بعدی
           </button>
         </div>
       )}

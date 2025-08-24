@@ -21,12 +21,44 @@ class InvoiceRepository extends BaseRepository {
   }
 
   async findByIdWithDetails(invoiceId) {
+    const { User, Profile, Product } = require('../models');
     return await this.model.findByPk(invoiceId, {
       include: [
         {
           model: InvoiceItem,
           as: 'invoiceItems',
+          include: [
+            {
+              model: Product,
+              as: 'invoiceProduct',
+              attributes: ['id', 'name', 'description']
+            }
+          ]
         },
+        {
+          model: User,
+          as: 'seller',
+          include: [
+            {
+              model: Profile,
+              as: 'profile',
+              attributes: ['firstName', 'lastName', 'email']
+            }
+          ],
+          attributes: ['id', 'phone']
+        },
+        {
+          model: User,
+          as: 'buyer',
+          include: [
+            {
+              model: Profile,
+              as: 'profile',
+              attributes: ['firstName', 'lastName', 'email']
+            }
+          ],
+          attributes: ['id', 'phone']
+        }
       ],
     });
   }

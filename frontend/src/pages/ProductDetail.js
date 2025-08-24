@@ -99,9 +99,9 @@ const ProductDetail = () => {
     return (
       <div className="container">
         <div className="error-page">
-          <h2>Product not found</h2>
+          <h2>محصول یافت نشد</h2>
           <button className="btn btn-primary" onClick={() => navigate('/')}>
-            Back to Home
+            بازگشت به خانه
           </button>
         </div>
       </div>
@@ -135,7 +135,7 @@ const ProductDetail = () => {
       <div className="container">
         <div className="product-detail-header">
           <button className="back-btn" onClick={() => navigate(-1)}>
-            <FaArrowLeft /> Back
+            <FaArrowLeft /> بازگشت
           </button>
         </div>
 
@@ -178,13 +178,13 @@ const ProductDetail = () => {
             </div>
 
             <div className="product-description">
-              <h3>Description</h3>
+              <h3>توضیحات</h3>
               <p>{product.description || 'No description available.'}</p>
             </div>
 
             {product.tags && product.tags.length > 0 && (
               <div className="product-tags">
-                <h3>Tags</h3>
+                <h3>برچسب‌ها</h3>
                 <div className="tags">
                   {product.tags.map(tag => (
                     <span 
@@ -201,7 +201,7 @@ const ProductDetail = () => {
 
             <div className="product-actions">
               <div className="quantity-selector">
-                <label>Quantity:</label>
+                <label>تعداد:</label>
                 <div className="quantity-controls">
                   <button
                     className="quantity-btn"
@@ -227,7 +227,7 @@ const ProductDetail = () => {
                 disabled={addingToCart}
               >
                 <FaShoppingCart />
-                {addingToCart ? 'Adding...' : 'Add to Cart'}
+                {addingToCart ? 'در حال افزودن...' : 'افزودن به سبد خرید'}
               </button>
             </div>
 
@@ -235,32 +235,32 @@ const ProductDetail = () => {
               <div className="feature">
                 <FaTruck />
                 <div>
-                  <h4>Free Delivery</h4>
-                  <p>On orders over $50</p>
+                  <h4>ارسال رایگان</h4>
+                  <p>برای سفارشات بالای 50 دلار</p>
                 </div>
               </div>
               <div className="feature">
                 <FaShieldAlt />
                 <div>
-                  <h4>Quality Guarantee</h4>
-                  <p>Fresh and high quality products</p>
+                  <h4>تضمین کیفیت</h4>
+                  <p>محصولات تازه و باکیفیت</p>
                 </div>
               </div>
               <div className="feature">
                 <FaUndo />
                 <div>
-                  <h4>Easy Returns</h4>
-                  <p>30-day return policy</p>
+                  <h4>مرجوعی آسان</h4>
+                  <p>سیاست مرجوعی 30 روزه</p>
                 </div>
               </div>
             </div>
 
             {product.seller && (
               <div className="seller-info">
-                <h3>Seller Information</h3>
+                <h3>اطلاعات فروشنده</h3>
                 <div className="seller-details">
-                  <p><strong>Name:</strong> {product.seller.profile?.first_name} {product.seller.profile?.last_name}</p>
-                  <p><strong>Phone:</strong> {product.seller.phone}</p>
+                  <p><strong>نام:</strong> {product.seller.profile?.first_name} {product.seller.profile?.last_name}</p>
+                  <p><strong>تلفن:</strong> {product.seller.phone}</p>
                 </div>
               </div>
             )}
